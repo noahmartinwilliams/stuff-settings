@@ -1,0 +1,11 @@
+#! /bin/bash
+
+mkdir pics
+mkdir snd
+mkdir src
+mkdir tmp
+mkdir bin
+find $1 \( -empty -delete \) -or \( -type f -regex '^.*\.\(bmp\|jpg\|jpeg\|png\|gif\)$' -exec mv '{}' pics \; \) \
+	-or \( -regex '^.*\.\(wav\|mp3\|ogg\)$' -exec mv '{}' snd \; \) -or \( -executable -exec mv '{}' bin \; \) \
+	-or \( -name Makefile -execdir cp -rf ../. ~/bin \; \) \
+	-or \( -writable -regex '.*[[:space:]+].*' -exec 'bash -c "mv \{\} \`echo \{\} \| sed \"s/[[:space:]+]/_/g\""' \; \) ;

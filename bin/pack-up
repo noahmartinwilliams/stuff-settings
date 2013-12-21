@@ -1,0 +1,51 @@
+#! /bin/bash
+
+ZIP="false";
+SSH="false";
+GIT="false";
+
+while getopts "zsg" opt; 
+do
+	case $opt in
+		z)
+			ZIP="true";
+			;;
+		s)
+			SSH="true";
+			;;
+		g)
+			GIT="true";
+			;;
+	esac
+done
+
+cd;
+mkdir suitcase
+
+cp -r --preserve  bin suitcase
+cp -r --preserve bash suitcase
+cp -r .vim suitcase
+cp -r .profile suitcase
+cp -r .bashrc suitcase
+cp .vimrc suitcase
+
+
+if [ "$SSH" == "true" ];
+then
+	cp -r .ssh suitcase
+fi
+
+if [ "$GIT" == "true" ];
+then
+	cp .gitconfig suitcase
+else
+	find suitcase/ -type f -path '*.git*' -delete
+	find suitcase/ -type d -path '*.git*' -delete
+fi
+
+if [ "$ZIP" == "true" ];
+then
+	tar cf suitcase.tar suitcase
+	gzip suitcase.tar
+	rm -rf suitcase
+fi

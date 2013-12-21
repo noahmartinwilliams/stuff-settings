@@ -1,0 +1,22 @@
+#! /bin/bash
+
+PATH="$PATH:~/bin"
+
+while getopts "m:n:" flag;
+do
+	case $flag in
+		m)
+			NAME=$OPTARG
+			;;
+		n)
+			NUM=$OPTARG
+			;;
+	esac
+done
+
+X=0
+while [ "$X" -lt "$NUM" ];
+do
+	shuffle-colors -r >$NAME$X
+	X=$(($X + 1))
+done

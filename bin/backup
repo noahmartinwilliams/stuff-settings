@@ -1,0 +1,122 @@
+#! /bin/bash
+
+YES=0
+REMOTE=0
+EXCLUDE=""
+SYNC='rsync -rutvH  $EXCLUDE $SRC $(catpath $(catpath $DEST $(hostname)) $TODAY)'
+SYNCLINKDEST='rsync -rutvH  $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $DEST $(hostname)) $TODAY)'
+function catpath {
+	P=$1
+	if [[ "$P" = */ ]];
+	then
+		echo "$1$2"
+	else
+		echo "$1/$2"
+	fi
+}
+
+while getopts ":ri:u:d:s:yc:e:" COM_OPT;
+do
+	case $COM_OPT in
+		y)
+			YES=1
+			shift;
+			;;
+		r)
+			REMOTE=1
+			SYNC='rsync -e ssh -rutvH  $EXCLUDE $SRC $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY)'
+			SYNCLINKDEST='rsync -e ssh -rutvH $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY)'
+			;;
+		d)
+			DEST=$OPTARG
+			;;
+		s)
+			SRC=$OPTARG
+			;;
+		u)
+			USER=$OPTARG
+			;;
+		i)
+			IP=$OPTARG
+			;;
+		c)
+			COMMAND=$OPTARG
+			;;
+		e)
+			EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC '"$OPTARG)\"" #this neat little trick lets me avoid subshell bullshit
+			;;
+	esac
+done
+
+if [ -z "$EXCLUDE" -a -f "$(catpath $SRC .exclude)" ];
+then
+	EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC .exclude)"'
+fi
+
+function lsdest {
+	LOC=$1	
+	if [ ! -z "$LOC" ];
+	then
+		if [ "$REMOTE" = 1 ];
+		then
+			ssh $USER@$IP ls $(catpath $DEST $LOC)
+		else
+			ls $(catpath $(realpath $DEST) $LOC)
+		fi
+	else
+		if [ "$REMOTE" = 1 ];
+		then
+			ssh $USER@$IP ls $DEST
+		else
+			ls $DEST
+		fi
+	fi
+}
+
+function mkdirdest {
+	LOC=$1
+	if [ ! -z "$LOC" ];
+	then
+		if [ "$REMOTE" = 1 ];
+		then
+			ssh $USER@$IP mkdir -p $(catpath $DEST $LOC)
+		else
+			mkdir -p $(catpath $DEST $LOC)
+		fi
+	else
+		echo "error: mkdirdest called without argument" >&2
+	fi
+}
+
+ON_DONE_COMMAND=true
+if [ ! -z "$COMMAND" ];
+then	
+	COMMAND_COND=$(echo "$COMMAND" | cut -f 1 -d ';')
+	case $COMMAND_COND in
+		'done')
+			ON_DONE_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
+			;;
+	esac
+fi
+
+TODAY=$(date '+%Y%m%d')
+if [ -z "$(lsdest | grep $(hostname))" ];
+then
+	mkdirdest $(hostname)
+fi
+
+LATEST=$(lsdest $(hostname) | grep -v 'lost+found' | grep '[0-9]\+' | sort -nr | grep -v '^'"$TODAY"'$' |  head -n 1 )
+if [ ! -z "$LATEST" ];
+then
+	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
+	#LATEST="$(echo $LATEST | sed 's,//$,/,g' )/$(basename $SRC)"
+	LATEST="../$LATEST"
+	mkdirdest $(catpath $(hostname) $TODAY)
+	eval $EXCLUDE
+	eval $SYNCLINKDEST 
+else
+	mkdirdest $(catpath $(hostname) $TODAY)
+	eval $EXCLUDE
+	eval $SYNC 
+fi
+eval $ON_DONE_COMMAND

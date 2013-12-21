@@ -1,0 +1,106 @@
+#! /bin/bash
+
+#this function takes each chosen color on the current
+#system's prompt scheme and turns it into a number
+function combine-genes {
+	GENE1=$1
+	GENE2=$2
+
+	X=1
+	RAND=$(($RANDOM % 2))
+	EMBRYO=$(mktemp)
+	echo "source ~/bash/colors" >>$EMBRYO
+
+	while [ "$X" -lt $(cat ~/bash/chosen-colors | wc -l) ];
+	do
+		if [ "$RAND" = 1 ];
+		then
+			cat $GENE1 | sed -n "$(($X+1))"'p' >>$EMBRYO
+		else 
+			cat $GENE2 | sed -n "$(($X+1))"'p' >>$EMBRYO
+		fi
+		RAND=$(($RANDOM%2))
+
+		X=$(($X+1))
+	done
+
+	cat $EMBRYO
+	rm $EMBRYO
+}
+
+function permutate {
+	if [ ! -f ~/bash/colors ];
+	then
+		echo "error: ~/bash/colors does not exist"
+		exit 1;
+
+	else 
+		if [ ! -f $1 ];
+		then
+			echo "error: $1 does not exist"
+		else	
+			NUMDB=$(cat ~/bash/colors | wc -l) 
+			LINES=(`cat $1 | sed '1d'`)
+			DBLINES=(`cat ~/bash/colors | sed '1d' | cut -f 1 -d '='`)
+			NUMCLR=$(cat $1 | wc -l) 
+			TMP=$(mktemp)
+			X=$2
+			while [ "$X" -gt 0 ];
+			do
+				RAND=$(( $(($RANDOM % $NUMCLR))  + 1))
+				RAND2=$(( $(( $RANDOM % $NUMDB)) +1))
+				LINES[$RAND]=$(echo "${LINES[$RAND]}" | sed 's/\(.*\)=.*/\1=$'"${DBLINES[$RAND2]}/g")
+				X=$(($X - 1 ))
+			done
+
+			echo "source ~/bash/colors" >> $TMP
+			for LINE in ${LINES[@]}
+			do
+				echo "$LINE" >>$TMP
+			done
+			mv $TMP $1
+		fi
+	fi
+}
+
+function randomize {
+	if [ ! -f ~/bash/colors ];
+	then
+		echo "error: ~/bash/colors does not exist";
+		exit 1;
+	else
+		NEWCLR=$(mktemp)
+		NUMLINES=0
+		echo "source ~/bash/colors" >>$NEWCLR
+		LINES=(`cat ~/bash/colors | sed '1d' | cut -f 1 -d '='`)
+		NUMLINES=$(cat ~/bash/colors | sed '1d' | cut -f 1 -d '=' | wc -l)
+		VARS=( 'ret1' 'ret2' 'name1' 'name2' 'host1' 'host2' 'dir1' 'dir2' 'prompt1' 'prompt2' 'command1' 'command2' )
+		for VAR in "${VARS[@]}"
+		do
+			echo "$VAR=\$${LINES[$(($RANDOM % $NUMLINES))]}" >>$NEWCLR
+		done
+		cat $NEWCLR
+		rm -f $NEWCLR
+
+	fi
+}
+
+while getopts "grp" VAR;
+do
+	case $VAR in
+		g)
+			shift
+			combine-genes $1 $2
+			;;
+
+		r)
+			shift
+			randomize 
+			;;
+		p)
+			shift;
+			permutate $1 $2
+			;;
+			
+	esac
+done

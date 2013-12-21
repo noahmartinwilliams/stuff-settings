@@ -1,0 +1,35 @@
+#! /bin/bash
+
+source ~/bash/functions.sh
+PATH="$PATH:~/bin"
+while getopt 'l:n:t:';
+do
+	case $COM_OPT in
+		l)
+			LVL=$OPTARG
+		;;
+		n)
+			NUMBER=$OPTARG
+		;;
+		t)
+			TARGET=$OPTARG
+		;;
+	esac
+done
+
+TMP=$(mktemp)
+if [ ! -f $TARGET ];
+then
+	echo "error: file $TARGET not found"
+	exit 1
+fi
+
+cat $TARGET >$TMP
+X=0;
+while [ "$X" -lt $NUMBER ];
+do	
+	shuffle-colors -p $(randline $TMP) $LVL
+	X=$(($X + 1));
+done
+
+rm -f $TMP

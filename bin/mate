@@ -1,0 +1,42 @@
+#! /bin/bash
+
+while getopts ":c:f:m:" COM_OPT;
+do
+	case $COM_OPT in
+		c)
+			NUM_CHILDREN=$OPTARG
+		;;
+		m)
+			M=$OPTARG
+		;;
+		f)
+			F=$OPTARG
+		;;
+	esac
+done
+
+if [ -z "$M" -o -z "$F" ];
+then
+	echo "usage: $0 -c num_children -m mother -f father"
+	exit 1
+fi
+
+if [ -z "$NUM_CHILDREN" ];
+then
+	NUM_CHILDREN=1
+fi
+
+PATH="$PATH:~/bin/"
+source ~/bash/functions.sh
+X=0
+TMP=$(mktemp)
+
+trap "rm -f $TMP" SIGTERM 
+
+while [ "$X" -lt $NUM_CHILDREN ];
+do
+	shuffle-colors -g $M $F >embryo$X 
+	X=$(($X + 1))
+done
+
+rm -f $TMP

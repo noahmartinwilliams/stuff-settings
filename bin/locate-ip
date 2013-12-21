@@ -1,0 +1,24 @@
+#! /bin/bash
+
+function ip-where { 
+	wget -qO- -U Mozilla http://www.ip-adress.com/ip_tracer/$1  \
+	| html2text -nobs -style pretty | sed -n /^$1/,/^$/p;
+
+}
+
+CITY=false
+while getopts ":c" OPT;
+do
+	case $OPT in
+		c)
+			CITY=true
+			shift
+			;;
+	esac
+done
+
+WHERE=$(ip-where $1)
+if [ "$CITY" = "true" ];
+then
+	echo "$WHERE" | grep city | sed -e 's/IP address//' -e 's/^[[:space:]\+]//g'
+fi	

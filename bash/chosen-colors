@@ -1,0 +1,13 @@
+source ~/bash/colors
+ret1=$bldgrn
+ret2=$bldred
+name1=$bldgrn
+name2=$bldred
+host1=$undblu
+host2=$undblu
+dir1=$undcyn
+dir2=$undcyn
+prompt1=$bldylw
+prompt2=$bldylw
+command1=$txtwht
+command2=$txtwht

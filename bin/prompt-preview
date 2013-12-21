@@ -1,0 +1,136 @@
+#! /bin/bash
+
+tput clear
+
+#1 red
+#2 green
+#3 yellow
+#4 blue
+#5 purple 
+#6 teal 
+#7 white
+
+USERNAME=$(whoami)
+CWD=$(pwd)
+HOST=$(hostname)
+X=0
+X2=0
+Y=0
+tput cup 0 0
+COLORS=$(cat $1 | sed '1d' )
+
+cat $1 | sed '1d' | while read LINE;
+do
+	NAME=$(echo $LINE | cut -f 1 -d '=')
+	COLOR=$(echo $LINE | cut -f 2 -d '=')
+	tput sgr0
+	case ${COLOR:0:4} in
+		'$bak')
+			COM=setab
+			;;
+		'$bld')
+			tput bold
+			COM=setaf
+			;;
+		'$und')
+			tput smul
+			COM=setaf
+			;;
+		'$txt')
+			COM=setaf
+			;;
+	esac
+
+	case ${COLOR:4:3} in
+		'blk')
+			COL=0
+			;;
+		'red')
+			COL=1
+			;;
+		'grn')
+			COL=2
+			;;
+		'blu')
+			COL=4
+			;;
+		'ylw')
+			COL=3
+			;;
+		'pur')
+			COL=5
+			;;
+		'cyn')
+			COL=6
+			;;
+		'wht')
+			COL=7
+			;;
+		'rst')
+			COL=7
+			;;
+	esac
+
+	tput $COM $COL
+
+	case $NAME in 
+		'ret1')
+			tput cup $Y $X
+			echo "0: "
+			X=$(($X + 3))
+			;;
+		'ret2')
+			tput cup $(($Y + 1)) $X2
+			echo "1: "
+			X2=$(($X2 + 3))
+			;;
+		'name1')
+			tput cup $Y $X
+			echo "$(whoami)@"
+			X=$(($X + ${#USERNAME} + 1))
+			;;
+		'name2')
+			tput cup $(($Y+1)) $X2
+			echo "$(whoami)@"
+			X2=$(($X2 + ${#USERNAME} +1))
+			;;
+		'host1')
+			tput cup $Y $X
+			echo "$(hostname)"
+			X=$(($X + ${#HOST}))
+			;;
+		'host2')
+			tput cup $(($Y + 1)) $X2
+			echo "$(hostname)"
+			X2=$(($X2 + ${#HOST}))
+			;;
+		'dir1')
+			tput cup $Y $X
+			echo " $(pwd)"
+			X=$(($X + ${#CWD} + 1))
+			;;
+		'dir2')
+			tput cup $(($Y + 1)) $X2
+			echo " $(pwd)"
+			X2=$(($X2 + ${#CWD} + 1))
+			;;
+		'prompt1')
+			tput cup $Y $X
+			echo "$ "
+			X=$(($X+2))
+			;;
+		'prompt2')
+			tput cup $(($Y+1)) $X2
+			echo "$ "
+			X2=$(($X2 + 2))
+			;;
+		'command1')
+			tput cup $Y $X
+			echo "ls "
+			;;
+		'command2')
+			tput cup $(($Y+1)) $X2
+			echo "ls "
+			;;
+	esac
+done
