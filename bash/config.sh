@@ -34,3 +34,5 @@ else
 	fi
 	echo -n "\\[$ret\\]$RET: \\[$name\\]\\u@\\[$host\\]\\h \\[$dir\\]\\w\\[$prompt\\]\$\\[$command\\] "`'
 fi
+
+stty eof  # is right above  on the keyboard. That's just asking for trouble :/
