@@ -7,7 +7,7 @@ function add
 }
 
 source ~/bash/local-aliases.sh
-alias rm='rm -i '
+alias rm='rm -i'
 alias espeak='espeak 2>/dev/null'
 alias speak='xclip -o | espeak --stdin'
 alias cdt='cd $TMP'
