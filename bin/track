@@ -1,0 +1,28 @@
+#! /bin/bash
+
+function catpath
+{ 
+	P=$1;
+	if [[ "$P" = */ ]]; then
+		echo "$1$2";
+	else
+		echo "$1/$2";
+	fi
+}
+
+source ~/bash/local-variables.sh
+if [ ! -f "$STUFF_SETTINGS_DIR" ];
+then
+	echo "STUFF_SETTINGS_DIR needs to be set in ~/bash/local-variables.sh"
+	exit 1
+fi
+
+
+LINK_DIR=$(dirname "$1")
+STUFF_PATH_MKDIR=$(catpath "$STUFF_SETTINGS_DIR" "$LINK_DIR") 
+TO_LINK=$(basename "$1")
+STUFF_PATH=$(catpath "$STUFF_PATH_MKDIR" "$TO_LINK")
+echo "$STUFF_PATH_MKDIR"
+echo "$STUFF_PATH"
+mkdir -p "$STUFF_PATH_MKDIR"
+ln "$1" "$STUFF_PATH"
