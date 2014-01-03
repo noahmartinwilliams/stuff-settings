@@ -41,7 +41,7 @@ do
 			DEST=$OPTARG
 			;;
 		s)
-			SRC=$OPTARG
+			SRC=$(realpath $OPTARG)
 			;;
 		u)
 			USER=$OPTARG
@@ -57,6 +57,13 @@ do
 			;;
 	esac
 done
+
+if [ "$REMOTE" = 1 ];
+then
+	DEST=$(ssh $USER@$IP realpath $DEST)
+else
+	DEST=$(realpath $DEST)
+fi
 
 if [ -z "$EXCLUDE" -a -f "$(catpath $SRC .exclude)" ];
 then
@@ -121,7 +128,7 @@ if [ ! -z "$LATEST" ];
 then
 	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
 	#LATEST="$(echo $LATEST | sed 's,//$,/,g' )/$(basename $SRC)"
-	LATEST="../$LATEST"
+	LATEST=$(catpath $DEST $(catpath $(hostname) $(catpath $LATEST $ROOT) $(basename $SRC)))
 	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
 	eval $EXCLUDE
 	eval $SYNCLINKDEST 
