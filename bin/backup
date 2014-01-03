@@ -3,15 +3,25 @@
 YES=0
 REMOTE=0
 EXCLUDE=""
-SYNC='rsync -rutvH  $EXCLUDE $SRC $(catpath $(catpath $DEST $(hostname)) $TODAY)'
-SYNCLINKDEST='rsync -rutvH  $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $DEST $(hostname)) $TODAY)'
+SYNC='rsync -rutvH  $EXCLUDE $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
+SYNCLINKDEST='rsync -rutvH  $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
 function catpath {
 	P=$1
 	if [[ "$P" = */ ]];
 	then
-		echo "$1$2"
+		if [[ "$2" = /* ]];
+		then
+			echo "$1${2#*/}"
+		else
+			echo "$1$2"
+		fi
 	else
-		echo "$1/$2"
+		if [[ "$2" = /* ]];
+		then
+			echo "$1$2"
+		else
+			echo "$1/$2"
+		fi
 	fi
 }
 
@@ -24,8 +34,8 @@ do
 			;;
 		r)
 			REMOTE=1
-			SYNC='rsync -e ssh -rutvH  $EXCLUDE $SRC $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY)'
-			SYNCLINKDEST='rsync -e ssh -rutvH $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY)'
+			SYNC='rsync -e ssh -rutvH  $EXCLUDE $SRC $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY) $ROOT)'
+			SYNCLINKDEST='rsync -e ssh -rutvH $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY) $ROOT)'
 			;;
 		d)
 			DEST=$OPTARG
@@ -88,6 +98,7 @@ function mkdirdest {
 	fi
 }
 
+ROOT=$(dirname $SRC)
 ON_DONE_COMMAND=true
 if [ ! -z "$COMMAND" ];
 then	
@@ -111,11 +122,11 @@ then
 	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
 	#LATEST="$(echo $LATEST | sed 's,//$,/,g' )/$(basename $SRC)"
 	LATEST="../$LATEST"
-	mkdirdest $(catpath $(hostname) $TODAY)
+	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
 	eval $EXCLUDE
 	eval $SYNCLINKDEST 
 else
-	mkdirdest $(catpath $(hostname) $TODAY)
+	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
 	eval $EXCLUDE
 	eval $SYNC 
 fi
