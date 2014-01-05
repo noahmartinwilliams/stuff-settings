@@ -6,6 +6,8 @@ function add
 	cd -;
 }
 
+shopt -s expand_aliases
+
 source ~/bash/local-aliases.sh
 alias rm='rm -i'
 alias espeak='espeak 2>/dev/null'
