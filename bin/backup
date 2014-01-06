@@ -2,6 +2,8 @@
 
 YES=0
 REMOTE=0
+ON_DONE_COMMAND=true
+ON_ERROR_COMMAND=false
 EXCLUDE=""
 SYNC='rsync -rutvH  $EXCLUDE $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
 SYNCLINKDEST='rsync -rutvH  $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
@@ -51,6 +53,18 @@ do
 			;;
 		c)
 			COMMAND=$OPTARG
+			if [ ! -z "$COMMAND" ];
+			then	
+				COMMAND_COND=$(echo "$COMMAND" | cut -f 1 -d ';')
+				case $COMMAND_COND in
+					'done')
+						ON_DONE_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
+						;;
+					"error")
+						ON_ERROR_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
+						;;
+				esac
+			fi
 			;;
 		e)
 			EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC '"$OPTARG)\"" #this neat little trick lets me avoid subshell bullshit
@@ -106,16 +120,6 @@ function mkdirdest {
 }
 
 ROOT=$(dirname $SRC)
-ON_DONE_COMMAND=true
-if [ ! -z "$COMMAND" ];
-then	
-	COMMAND_COND=$(echo "$COMMAND" | cut -f 1 -d ';')
-	case $COMMAND_COND in
-		'done')
-			ON_DONE_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
-			;;
-	esac
-fi
 
 TODAY=$(date '+%Y%m%d')
 if [ -z "$(lsdest | grep $(hostname))" ];
@@ -131,10 +135,10 @@ then
 	LATEST=$(catpath $DEST $(catpath $(hostname) $(catpath $LATEST $ROOT) $(basename $SRC)))
 	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
 	eval $EXCLUDE
-	eval $SYNCLINKDEST 
+	eval $SYNCLINKDEST  || $ON_ERROR_COMMAND
 else
 	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
 	eval $EXCLUDE
-	eval $SYNC 
+	eval $SYNC  || $ON_ERROR_COMMAND
 fi
 eval $ON_DONE_COMMAND
