@@ -121,7 +121,7 @@ function mkdirdest {
 
 ROOT=$(dirname $SRC)
 
-TODAY=$(date '+%Y%m%d')
+TODAY=$(date '+%Y%m%d%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
 	mkdirdest $(hostname)
