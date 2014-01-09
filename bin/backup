@@ -5,8 +5,9 @@ REMOTE=0
 ON_DONE_COMMAND=true
 ON_ERROR_COMMAND=false
 EXCLUDE=""
-SYNC='rsync -rutvH  $EXCLUDE $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
-SYNCLINKDEST='rsync -rutvH  $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $(catpath $DEST $(hostname)) $TODAY) $ROOT)'
+RSYNC_OPTS=-rutvH
+SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
+SYNCLINKDEST='rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 function catpath {
 	P=$1
 	if [[ "$P" = */ ]];
@@ -36,8 +37,8 @@ do
 			;;
 		r)
 			REMOTE=1
-			SYNC='rsync -e ssh -rutvH  $EXCLUDE $SRC $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY) $ROOT)'
-			SYNCLINKDEST='rsync -e ssh -rutvH $EXCLUDE --link-dest=$LATEST $SRC $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $TODAY) $ROOT)'
+			SYNC='rsync -e ssh $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $SRC) $TODAY)/'
+			SYNCLINKDEST='rsync -e ssh $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $USER@$IP:$DEST $(hostname)) $SRC) $TODAY)/'
 			;;
 		d)
 			DEST=$OPTARG
@@ -119,26 +120,25 @@ function mkdirdest {
 	fi
 }
 
-ROOT=$(dirname $SRC)
-
 TODAY=$(date '+%Y%m%d%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
 	mkdirdest $(hostname)
 fi
 
-LATEST=$(lsdest $(hostname) | grep -v 'lost+found' | grep '[0-9]\+' | sort -nr | grep -v '^'"$TODAY"'$' |  head -n 1 )
+LATEST=$(lsdest $(catpath $(hostname) $SRC) | egrep '[0-9]+' | sort -nr |  head -n 1 )
 if [ ! -z "$LATEST" ];
 then
 	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
 	#LATEST="$(echo $LATEST | sed 's,//$,/,g' )/$(basename $SRC)"
-	LATEST=$(catpath $DEST $(catpath $(hostname) $(catpath $LATEST $ROOT) $(basename $SRC)))
-	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
+	LATEST=$(catpath $DEST $(catpath $(catpath $(hostname) $SRC) $LATEST))
+	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
 	eval $EXCLUDE
 	eval $SYNCLINKDEST  || $ON_ERROR_COMMAND
 else
-	mkdirdest $(catpath $(catpath $(hostname) $TODAY) $ROOT)
+	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
 	eval $EXCLUDE
 	eval $SYNC  || $ON_ERROR_COMMAND
+	echo $SYNCLINKDEST
 fi
 eval $ON_DONE_COMMAND
