@@ -9,7 +9,7 @@ function add
 shopt -s expand_aliases
 
 source ~/bash/local-aliases.sh
-alias rm='rm -i'
+alias rm='rm -I'
 alias espeak='espeak 2>/dev/null'
 alias speak='xclip -o | espeak --stdin'
 alias cdt='cd $TMP'
