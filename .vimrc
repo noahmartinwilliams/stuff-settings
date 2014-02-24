@@ -8,6 +8,7 @@ set softtabstop=8
 set shiftwidth=8
 "set errorbells
 set splitright
+set autoindent
 
 so ~/.vim/fugitive.vim
 
