@@ -2,8 +2,8 @@
 
 YES=0
 REMOTE=0
-ON_DONE_COMMAND=true
-ON_ERROR_COMMAND=false
+ON_DONE_COMMAND="exit 0"
+ON_ERROR_COMMAND="exit 1"
 EXCLUDE=""
 RSYNC_OPTS=-rutvH
 SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
@@ -59,10 +59,10 @@ do
 				COMMAND_COND=$(echo "$COMMAND" | cut -f 1 -d ';')
 				case $COMMAND_COND in
 					'done')
-						ON_DONE_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
+						ON_DONE_COMMAND="$(echo \"$COMMAND\" | cut -f 2 -d ';'); exit 0"
 						;;
 					"error")
-						ON_ERROR_COMMAND=$(echo "$COMMAND" | cut -f 2 -d ';')
+						ON_ERROR_COMMAND="$(echo \"$COMMAND\" | cut -f 2 -d ';'); exit 1"
 						;;
 				esac
 			fi
