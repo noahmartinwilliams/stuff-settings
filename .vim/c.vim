@@ -6,9 +6,11 @@ set nu
 
 
 function! UpdateHeader(header, head)
-	exec "!sed -i '$d' ".a:header
+	exec "silent !sed -i '$d' ".a:header
 	call feedkeys("<enter>")
-	exec "!echo \"extern ".a:head.";\" >>".a:header
+	let modified_name=substitute(a:head, "=[^,;]*", "", "g")
+	let modified_name=substitute(modified_name, ";", "", "g")
+	exec "!echo \"extern ".modified_name.";\" >>".a:header
 	call feedkeys("<enter>")
 	exec '!echo "\#endif" >>'.a:header
 	call feedkeys("<enter>")
