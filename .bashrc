@@ -70,8 +70,8 @@ MESG="Hi there, I'm $HOSTNAME, your built-in operating system. I just want you t
 source ~/bash/aliases.sh
 source ~/bash/functions.sh
 source ~/bash/variables.sh
-source ~/bash/config.sh
 source ~/.inputrc
+source ~/bash/config.sh
 
 [ "$(($RANDOM % 4))" = "3" ] && cowsay -f tux "$MESG" || fortune -c | cowsay -f tux
 

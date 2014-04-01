@@ -3,8 +3,6 @@ source ~/bash/chosen-colors
 if [ "$TERM" = "linux" -o "$TERM" = "screen" ];
 then
 	alias google='google -c '
-	alias display='fbi'
-	alias dis='display 2>/dev/null'
 
 
 elif [ "$TERM" = "guake" -o "$TERM" = "gnome" ];
@@ -12,7 +10,7 @@ then
 	alias google='google'
 fi
 
-if [ "$(date '+\%d\%b')" = "01Apr" ];
+if [ "$(date '+%d%b')" = "01Apr" ];
 then
 	PROMPT_COMMAND='PS1="C: $(pwd | sed s,/,\\\\\\\\,g)>"'
 else
