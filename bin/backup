@@ -5,7 +5,7 @@ REMOTE=0
 ON_DONE_COMMAND="exit 0"
 ON_ERROR_COMMAND="exit 1"
 EXCLUDE=""
-RSYNC_OPTS=-rutvH
+RSYNC_OPTS="-rutvH --safe-links"
 SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 SYNCLINKDEST='rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 function catpath {
