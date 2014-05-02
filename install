@@ -9,7 +9,7 @@ read CONTINUE
 if [ "$CONTINUE" = "y" ];
 then
 	find "$SELF_DIR" -type d | sed '1d' | grep -v '.git' | xargs realpath | sed 's,'"$SELF_DIR"'/\(.*\),\1,g' | xargs -I % mkdir -p ~/%
-	find "$SELF_DIR" -type f | sed '1d' | grep -v '.git' | xargs realpath | sed 's,'"$SELF_DIR"'/\(.*\),\1,g' | xargs -I % ln % ~/%
+	find "$SELF_DIR" -type f | sed '1d' | grep -v '.git' | xargs realpath | sed 's,'"$SELF_DIR"'/\(.*\),\1,g' | xargs -I % ln -f % ~/%
 	rm -f ~/install ~/LICENSE ~/README.md
 	echo "STUFF_SETTINGS_DIR=$SELF_DIR" >> ~/bash/local-variables.sh
 	touch ~/bash/local-aliases.sh ~/bash/local-functions.sh
