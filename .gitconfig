@@ -1,0 +1,15 @@
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+	type = cat-file -t
+	dump = cat-file -p
+[user]
+	name = skynet1
+	passwd = fuckyou42
+	email = thecrazymancan@gmail.com
+[core]
+	autocrlf = input
+	safecrlf = true
