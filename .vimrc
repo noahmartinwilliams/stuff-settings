@@ -1,5 +1,6 @@
 so ~/.vim/mod.vim
 
+map <F5> :so<space>~/.vim/program-mode.vim<enter>
 map <F4> <esc> :sh <enter>
 map W <c-w>w
 set encoding=utf-8
@@ -9,8 +10,6 @@ set shiftwidth=8
 "set errorbells
 set splitright
 set autoindent
-
-so ~/.vim/fugitive.vim
 
 autocmd BufNewFile,BufRead *.h so ~/.vim/header.vim
 autocmd BufRead,BufNewFile *.clj set filetype=clojure
