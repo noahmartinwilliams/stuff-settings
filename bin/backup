@@ -120,7 +120,7 @@ function mkdirdest {
 	fi
 }
 
-TODAY=$(date '+%Y,%m,%d,%H:%M')
+TODAY=$(date '+%Y%m%d%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
 	mkdirdest $(hostname)
