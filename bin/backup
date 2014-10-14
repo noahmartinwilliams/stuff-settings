@@ -6,8 +6,8 @@ ON_DONE_COMMAND="exit 0"
 ON_ERROR_COMMAND="exit 1"
 EXCLUDE=""
 RSYNC_OPTS="-rutvH --safe-links"
-SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
-SYNCLINKDEST='rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
+SYNC='flock $(catpath $(catpath $DEST $(hostname)) $SRC) -c "rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/"'
+SYNCLINKDEST='flock $(catpath $(catpath $DEST $(hostname)) $SRC) -c "rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/"'
 function catpath {
 	P=$1
 	if [[ "$P" = */ ]];
@@ -120,7 +120,7 @@ function mkdirdest {
 	fi
 }
 
-TODAY=$(date '+%Y%m%d%H%M')
+TODAY=$(date '+%Y,%m,%d,%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
 	mkdirdest $(hostname)
@@ -139,6 +139,5 @@ else
 	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
 	eval $EXCLUDE
 	eval $SYNC  || $ON_ERROR_COMMAND
-	echo $SYNCLINKDEST
 fi
 eval $ON_DONE_COMMAND
