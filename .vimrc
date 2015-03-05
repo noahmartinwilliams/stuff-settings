@@ -35,6 +35,7 @@ autocmd BufNewFile *.py 0put = '#! /usr/bin/python'
 autocmd BufNewFile *.sh 0put = '#! /bin/bash'
 autocmd BufNewFile *.sh set autoindent
 autocmd BufNewFile *.rb 0put = '#! /usr/bin/ruby'
+autocmd BufNewFile *.scala so ~/.vim/scala.vim
 
 
 nmap <C-S-P> :call <SID>SynStack()<CR>
