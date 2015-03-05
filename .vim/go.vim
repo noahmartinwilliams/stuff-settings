@@ -5,6 +5,7 @@ syntax keyword GO_Bold range
 
 syntax keyword GO_Type int
 syntax keyword GO_Type int32
+syntax keyword GO_Type float64
 syntax keyword GO_Type var
 syntax keyword GO_Type bool
 syntax keyword GO_Type string
