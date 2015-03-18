@@ -4,7 +4,6 @@ map <buffer> /* i/*<space><space>*/<left><left><left>
 set foldmethod=manual
 set nu
 so ~/.vim/DateStamp.vim
-autocmd BufWritePre *.c execute "call DateStamp()"
 
 function! UpdateHeader(header, head)
 	exec "silent !sed -i '$d' ".a:header
