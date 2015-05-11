@@ -92,5 +92,8 @@ function mod2oct {
 	-e 's/\(.*\).$/\1/g' | bc
 }
 
+function irc {
+	nik=clf$RANDOM;sr=$1;expect -c "set timeout -1;spawn nc $sr 6666;set send_human {.1 .2 1 .2 1};expect AUTH*\n ;send -h \"user $nik * * :$nik commandlinefu\nnick $nik\n\"; interact -o -re (PING.:)(.*\$) {send \"PONG :\$interact_out(2,string)\"}"
+}
 
 source ~/bash/local-functions.sh
