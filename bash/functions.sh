@@ -93,6 +93,7 @@ function mod2oct {
 }
 
 function irc {
+	#Credit goes to this guy: http://www.commandlinefu.com/commands/view/14116/bare-metal-irc-client#comment
 	nik=clf$RANDOM;sr=$1;expect -c "set timeout -1;spawn nc $sr 6666;set send_human {.1 .2 1 .2 1};expect AUTH*\n ;send -h \"user $nik * * :$nik commandlinefu\nnick $nik\n\"; interact -o -re (PING.:)(.*\$) {send \"PONG :\$interact_out(2,string)\"}"
 }
 
