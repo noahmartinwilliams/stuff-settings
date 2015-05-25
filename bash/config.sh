@@ -30,7 +30,7 @@ else
 		command=$command2;
 		host=$host2;
 	fi
-	echo -n "\\[$ret\\]$RET: \\[$name\\]\\u@\\[$host\\]\\h \\[$dir\\]\\w\\[$prompt\\]\$\\[$command\\] "`'
+	echo -n "\\[$ret\\]$RET: \\[$reset\\]\\[$name\\]\\u@\\[$reset\\]\\[$host\\]\\h \\[$reset\]\\[$dir\\]\\w\\[$reset\\]\\[$prompt\\]\$\\[$reset\\]\\[$command\\] "`'
 fi
 
 stty eof  # is right above  on the keyboard. That's just asking for trouble :/
