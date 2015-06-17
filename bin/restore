@@ -1,0 +1,109 @@
+#! /bin/bash
+
+#TODO modify this so that the -f option automagically resolves the path of the file on the backup
+#planned options
+#-b the backup directory (the same directory that was the argument to the -d option of the backup command)
+#-i the ip address (for remote backups)
+#-u the username (for remote backups)
+#-f the file to restore
+#-d the directory to restore
+#-h the hostname (for selecting backups from other machines)
+#-s select the file
+#-n for selecting named backup entries (without an argument gives you a menu to select from, with an argument selects from that one automagically)
+#-N tell where the named backup entries are.
+function catpath {
+	P=$1
+	if [[ "$P" = */ ]];
+	then
+		if [[ "$2" = /* ]];
+		then
+			echo "$1${2#*/}"
+		else
+			echo "$1$2"
+		fi
+	else
+		if [[ "$2" = /* ]];
+		then
+			echo "$1$2"
+		else
+			echo "$1/$2"
+		fi
+	fi
+}
+
+HOSTNAME=$(hostname)
+REMOTE=false
+FILE_SELECTED=false
+FILE=""
+while getopts 'ri:s:u:b:h:f:' OPT;
+do
+	case $OPT in
+	i)
+		REMOTE=true
+		IP="$OPTARG"
+	;;
+	b)
+		BACKUP="$OPTARG" #the place where everything is backed up to
+	;;
+
+	h)
+		HOSTNAME="$OPTARG"
+	;;
+	s)
+		SOURCE=$(catpath $(catpath "$BACKUP" $HOSTNAME) $OPTARG)
+		#this takes the option for the path to the place where the
+		#snapshots are rather than the option for selecting files
+	;;
+	u)
+		USER="$OPTARG"
+	;;
+	f)
+		FILE="$OPTARG"
+		FILE_SELECTED=true
+		FILE_FULL_PATH=$(dirname $(realpath $OPTARG))
+		SPLIT_DIRS=$(echo "$(catpath $(catpath $BACKUP $HOSTNAME)  $FILE_FULL_PATH)" | sed 's/^\/\(.*\)/\1/g')
+		DIR="/" ; 
+		DIR2=$(echo $SPLIT_DIRS | tr '/' '\n' | while read DIRLEVEL;
+		do
+			DIR="$DIR$DIRLEVEL/" 
+			echo $DIR 
+			if [ "$REMOTE" = true ];
+			then
+				(ssh $USER@$IP ls $DIR  </dev/null | grep '[0-9]\+,[0-9]\{2,2\},[0-9]\{2,2\},[0-9]\{4,4\}' >/dev/null 2>/dev/null) && break ;
+			else
+				(ls $DIR | grep '[0-9]\+,[0-9]\{2,2\},[0-9]\{2,2\},[0-9]\{4,4\}' >/dev/null 2>/dev/null) && break ;
+			fi
+		done)
+
+		SOURCE=$(echo "$DIR2" | tail -n 1)
+		SOURCE_NO_BACKUP=$(echo "$SOURCE" | sed 's/^'"$(echo $BACKUP | sed 's/\//\\\//g')"'$//g')
+		FILE_FULL_PATH=$(echo $FILE_FULL_PATH | sed 's/^'"$(echo $SOURCE_NO_BACKUP | sed 's/\//\\\//g')"'//g')
+
+	;;
+	esac
+done
+
+SELECTED_ENTRY=""
+
+function remote_backup_select {
+
+	NUM_BACKUPS=$(ssh $USER@$IP ls $SOURCE | wc -l)
+	TMP_BACKUP_LIST=$(mktemp)
+	ssh $USER@$IP ls $SOURCE | sort -n -r >$TMP_BACKUP_LIST
+	cat $TMP_BACKUP_LIST >tmp.txt
+	PROCESSED_BACKUP_LIST=$(cat $TMP_BACKUP_LIST | sed 's/^\(.*\)$/\1 \1 /g' | tr -d '\n' ) 
+	TMP_SELECTED_ENTRY=$(mktemp)
+	(echo $PROCESSED_BACKUP_LIST | xargs dialog --menu "choose" 15 50 4 ) 2>$TMP_SELECTED_ENTRY
+	SELECTED_ENTRY=$(cat $TMP_SELECTED_ENTRY)
+
+	rm $TMP_SELECTED_ENTRY
+	rm $TMP_BACKUP_LIST
+}
+
+if [ "$REMOTE" = true ];
+then
+	remote_backup_select
+	FILE_PATH=$(catpath $(catpath $(catpath $(catpath $BACKUP $SOURCE) $SELECTED_ENTRY) $FILE_FULL_PATH) $(basename $FILE))
+	rm $FILE
+	scp $USER@$IP:$FILE_PATH .
+fi
