@@ -120,6 +120,20 @@ function mkdirdest {
 	fi
 }
 
+function rmdirdest {
+	LOC=$1
+	if [ ! -z "$LOC" ];
+	then
+		if [ "$REMOTE" = 1 ];
+		then
+			ssh $USER@$IP rm -rf $(catpath $DEST $LOC)
+		else
+			rm -rf $(catpath $DEST $LOC)
+		fi
+	else
+		echo "error: rmdirdest called without argument" >&2
+	fi
+}
 TODAY=$(date '+%Y,%m,%d,%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
@@ -133,10 +147,12 @@ then
 	#LATEST="$(echo $LATEST | sed 's,//$,/,g' )/$(basename $SRC)"
 	LATEST=$(catpath $DEST $(catpath $(catpath $(hostname) $SRC) $LATEST))
 	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
+	trap "rmdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)" INT 
 	eval $EXCLUDE
 	eval $SYNCLINKDEST  || $ON_ERROR_COMMAND
 else
 	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
+	trap "rmdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)" INT 
 	eval $EXCLUDE
 	eval $SYNC  || $ON_ERROR_COMMAND
 fi
