@@ -103,7 +103,8 @@ function remote_backup_select {
 if [ "$REMOTE" = true ];
 then
 	remote_backup_select
-	FILE_PATH=$(catpath $(catpath $(catpath $(catpath $BACKUP $SOURCE) $SELECTED_ENTRY) $FILE_FULL_PATH) $(basename $FILE))
+	FILE_FULL_PATH=$(echo "$FILE_FULL_PATH" | sed 's/'"$SOURCE"'//g')
+	FILE_PATH=$(catpath $(catpath $(catpath $SOURCE $SELECTED_ENTRY) $FILE_FULL_PATH) $FILE)
 	rm $FILE
 	scp $USER@$IP:$FILE_PATH .
 fi
