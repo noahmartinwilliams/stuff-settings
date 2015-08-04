@@ -50,3 +50,6 @@ alias espeak='espeak --stdin'
 alias :q='tput setaf 1; echo >&2 "this is NOT vi(m) :/"; tput sgr0'
 alias macros='gcc -dM -E - </dev/null'
 alias escname="sed -e 's/\\([[:space:]]\\)/\\\\\\1/g' -e 's/(/\\\\(/g' -e 's/)/\\\\)/g' -e 's/\\$/\\\\$/g' -e 's/~/\\\\~/g' -e 's/\\*/\\\\*/g' "
+alias mkae='make'
+alias clean='make clean'
+alias clnea='clean'
