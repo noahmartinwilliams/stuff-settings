@@ -21,6 +21,7 @@ function! UpdateHeader(head)
 			let header_intern_name=toupper(system("basename ".header))
 			let header_intern_name=substitute(header_intern_name, "\\.", "_", "g")
 			let header_intern_name=substitute(header_intern_name, "\\n", "", "g")
+			let header_intern_name=substitute(header_intern_name, "-", "_", "g")
 			exec "!echo \"\\#ifndef __".header_intern_name."__\" >".header 
 			exec "!echo -e \"\\#define __".header_intern_name."__\\n\\n\" >>".header
 			let modified_name=substitute(a:head, "=[^,;]*", "", "g")
