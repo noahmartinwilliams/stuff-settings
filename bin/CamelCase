@@ -1,0 +1,6 @@
+#!/usr/bin/sbcl --script
+(defun camelCase (s)
+  (remove #\Space
+	  (string-capitalize
+	    (substitute #\Space nil s :key #'alpha-char-p))))
+(loop for x in (rest sb-ext:*posix-argv*) do (format t "~A~%" (camelCase x)))
