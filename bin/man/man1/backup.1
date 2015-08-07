@@ -1,0 +1,50 @@
+.TH backup 1 08/07/2015
+.SH NAME
+backup - backup your data.
+
+.SH SYNOPSIS
+backup -r -i [ip address] -u [username] -s [source directory] -d [destination directory]
+.br
+backup -s [source directory] -d [destination directory]
+
+.SH DESCRIPTION
+Backup is the best command in the history of forever because it does snapshot 
+backups for you. It does this thanks to the magic of being a shell script
+wrapper for someone else's crap. It can do both local, and remote backups
+using the magic of ssh.
+.br
+.RS 3
+.TP 8
+.B -y 
+Causes backup to automagically assume you want to say 'yes' for every question it might have. This way it can be non-interactive.
+.br
+.TP
+.B -r
+Causes backup to do a remote backup (note this doesn't work if there is no ip address given by -i.
+.br
+.TP
+.B -d [destination]
+This tells backup what the destination directory is for the backup (on either the local, or remote machine).
+.br
+.TP
+.B -s [source]
+This tells backup which directory to backup.
+.br
+.TP
+.B -u [username]
+This tells backup what username to use when trying to ssh into the backup server.
+.br
+.TP
+.B -i [ip address]
+Specifies the IP address for remote backups (note: supplying domain names should also work just fine (other note: this has not been tested on IPv6)).
+.br
+.TP
+.B -e [exclude path]
+Specifies one single directory to exclude files from.
+.br
+Note: if there is a file named ".exclude" in the source directory, then
+it will follow that files exclude patterns. For more info check out rsync's
+man page and read up on exclude file formats (since rsync is what this thing uses).
+.LP
+.SH SEE ALSO
+rsync(1)
