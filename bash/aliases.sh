@@ -9,6 +9,7 @@ function add
 shopt -s expand_aliases
 
 source ~/bash/local-aliases.sh
+alias myip='curl ifconfig.me'
 alias espeak='espeak 2>/dev/null'
 alias speak='xclip -o | espeak --stdin'
 alias cdt='cd $TMP'
@@ -50,6 +51,5 @@ alias espeak='espeak --stdin'
 alias :q='tput setaf 1; echo >&2 "this is NOT vi(m) :/"; tput sgr0'
 alias macros='gcc -dM -E - </dev/null'
 alias escname="sed -e 's/\\([[:space:]]\\)/\\\\\\1/g' -e 's/(/\\\\(/g' -e 's/)/\\\\)/g' -e 's/\\$/\\\\$/g' -e 's/~/\\\\~/g' -e 's/\\*/\\\\*/g' "
+alias su='su -l '
 alias mkae='make'
-alias clean='make clean'
-alias clnea='clean'
