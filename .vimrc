@@ -22,7 +22,6 @@ autocmd filetype perl so ~/.vim/perl.vim
 autocmd filetype assembly so ~/.vim/assembly.vim
 autocmd filetype LaTeX so ~/.vim/latex.vim
 autocmd filetype clojure so ~/.vim/clojure.vim
-autocmd BufNewFile,BufRead *.go so ~/.vim/go.vim
 
 autocmd BufNewFile * let fname=expand("%:p")
 autocmd BufNewFile *.sh execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
