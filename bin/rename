@@ -1,0 +1,45 @@
+#! /bin/bash
+
+NO_ACT=0
+VERBOSE=0
+FORCE=0
+while getopts 'nvf' OPT;
+do
+	case $OPT in
+	n)
+		NO_ACT=1
+		shift;
+		;;
+	v)
+		VERBOSE=1
+		shift;
+		;;
+	f)
+		FORCE=1
+		shift;
+		;;
+	esac
+done
+REGEX=$1
+shift;
+
+while [ ! -z "$1" ];
+do
+	OLDFILE="$1"
+	NEWFILE=$(echo "$OLDFILE" | sed "$REGEX")
+	shift;
+	[ "$OLDFILE" = $NEWFILE ] && continue;
+	if [ "$NO_ACT" = 1 ];
+	then
+		echo "mv $OLDFILE $NEWFILE"
+	else
+		if [ "$FORCE" = 1 ];
+		then
+			mv -f $OLDFILE $NEWFILE
+			[ "$?" = 0 -a "$VERBOSE" = 1 ] && echo "$OLDFILE"
+		else 
+			mv -n $OLDFILE $NEWFILE
+			[ "$?" = 0 -a "$VERBOSE" = 1 ] && echo "$OLDFILE"
+		fi
+	fi
+done
