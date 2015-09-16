@@ -1,0 +1,22 @@
+#!/usr/bin/swipl -q -s
+:- initialization main.
+
+unify(X, X).
+
+random_vowel(Vowel):- random(0, 4, Rand), unify(List, ['a', 'e', 'i', 'o', 'u']), nth0(Rand, List, Vowel).
+
+random_consonant(Consonant):- unify(List, ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y','z']), random(0, 8, Rand), nth0(Rand, List, Consonant).
+
+choose_character(Type, Char):- (Type=\=1, random_consonant(Char)) ;
+	(Type==1, random_vowel(Char)).
+
+random_word_intern(Length, WordSoFar, CharType, Word):- 
+	(Length==0, Word=WordSoFar);
+	choose_character(CharType, Char),
+	string_concat(WordSoFar, Char, NewString),
+	Length2 is Length - 1,
+	CharType2 is 0 - CharType,
+	random_word_intern(Length2, NewString, CharType2, Word).
+
+random_word(Length, CharType, Word):- random_word_intern(Length, '', CharType, Word).
+main([Argv]):- prompt(_, ''), atom_number(Argv, Num), random_word(Num, 1, W), format("~s~n", W), halt.
