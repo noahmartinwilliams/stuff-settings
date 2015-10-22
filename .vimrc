@@ -4,6 +4,7 @@ map <F5> :so<space>~/.vim/program-mode.vim<enter>
 map <F4> <esc> :sh <enter>
 map W <c-w>w
 set encoding=utf-8
+syntax on
 
 set softtabstop=8
 set shiftwidth=8

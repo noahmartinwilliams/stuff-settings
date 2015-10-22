@@ -53,3 +53,5 @@ alias macros='gcc -dM -E - </dev/null'
 alias escname="sed -e 's/\\([[:space:]]\\)/\\\\\\1/g' -e 's/(/\\\\(/g' -e 's/)/\\\\)/g' -e 's/\\$/\\\\$/g' -e 's/~/\\\\~/g' -e 's/\\*/\\\\*/g' "
 alias su='su -l '
 alias mkae='make'
+alias ding='cvlc ~/Sound/ding.wav'
+alias common_words="sed 's/[[:space:],.;:?\"!]\+/\n/g' | tr 'A-Z' 'a-z' | sed '/^[[:space:]]*$/d' | sort | uniq -c | sort -h -r"

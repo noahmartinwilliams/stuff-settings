@@ -97,4 +97,13 @@ function irc {
 	nik=clf$RANDOM;sr=$1;expect -c "set timeout -1;spawn nc $sr 6666;set send_human {.1 .2 1 .2 1};expect AUTH*\n ;send -h \"user $nik * * :$nik commandlinefu\nnick $nik\n\"; interact -o -re (PING.:)(.*\$) {send \"PONG :\$interact_out(2,string)\"}"
 }
 
+function urlxray {
+curl -s http://urlxray.com/display.php?url=$1 | grep -o '<title>.*</title>' | sed 's/<title>.*--> \(.*\)<\/title>/\1/g';
+}
+
+function tinyurl {
+	curl -s http://tinyurl.com/create.php?url=$1 | sed -n 's/.*\(http:\/\/tinyurl.com\/[a-z0-9][a-z0-9]*\).*/\1/p' | uniq ;
+}
+
+
 source ~/bash/local-functions.sh
