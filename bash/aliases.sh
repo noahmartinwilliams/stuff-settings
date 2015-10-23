@@ -55,3 +55,4 @@ alias su='su -l '
 alias mkae='make'
 alias ding='cvlc ~/Sound/ding.wav'
 alias common_words="sed 's/[[:space:],.;:?\"!]\+/\n/g' | tr 'A-Z' 'a-z' | sed '/^[[:space:]]*$/d' | sort | uniq -c | sort -h -r"
+alias mkdir='mkdir -p'
