@@ -19,4 +19,4 @@ random_word_intern(Length, WordSoFar, CharType, Word):-
 	random_word_intern(Length2, NewString, CharType2, Word).
 
 random_word(Length, CharType, Word):- random_word_intern(Length, '', CharType, Word).
-main([Argv]):- prompt(_, ''), atom_number(Argv, Num), random_word(Num, 1, W), format("~s~n", W), halt.
+main([Argv]):- prompt(_, ''), atom_number(Argv, Num), random_word(Num, -1, W), format("~s~n", W), halt.
