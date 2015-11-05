@@ -9,6 +9,22 @@ function up {
 		return;
 	fi
 
+	if [ "$1" = "-i" ]; # 'i' for "interactive"
+	then
+		while read -n 1 -s COMMAND;
+		do
+			if [ "$COMMAND" = "h" ];
+			then
+				CURRENT_DIR_OFFSET=$(basename $(pwd) | wc -c)
+				echo -en "\033[1A\033["$CURRENT_DIR_OFFSET"D" ;
+			fi
+			if [ "$COMMAND" = "" ];
+			then
+				break
+			fi
+		done
+	fi
+
 	NUM_TIMES=$( echo $(($1 - 1)) );
 	DOTS=""
 
@@ -19,6 +35,7 @@ function up {
 
 	cd $DOTS
 }
+
 
 function frequency {
 	history | sed 's/^[[:space:]]*[0-9]*[[:space:]]*\([-_a-zA-Z0-9]*\).*$/\1/g' | sort | uniq -c | sort -nr;
@@ -105,5 +122,8 @@ function tinyurl {
 	curl -s http://tinyurl.com/create.php?url=$1 | sed -n 's/.*\(http:\/\/tinyurl.com\/[a-z0-9][a-z0-9]*\).*/\1/p' | uniq ;
 }
 
+function timer {
+	sleep $1; timeout -k 1s 10s cvlc ~/Sound/ding.wav
+}
 
 source ~/bash/local-functions.sh
