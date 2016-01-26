@@ -5,6 +5,8 @@ map <F4> <esc> :sh <enter>
 map W <c-w>w
 set encoding=utf-8
 syntax on
+set wildmode=longest,full
+set wildmenu
 
 set softtabstop=8
 set shiftwidth=8
