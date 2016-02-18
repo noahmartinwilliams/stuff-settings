@@ -1,0 +1,19 @@
+#! /bin/bash
+
+update_file() {
+	if [ -f /etc/debian_version ] ;
+	then
+		PACKAGES=~/bash/debian-packages.txt
+
+		if [ "$1" = "autoremove" -o "$1" = "remove" -o "$1" = "purge" ];
+		then
+			sed -i '/install[[:space:]]*'"$2"'/d' $PACKAGES
+		else
+			echo "$1 $2" >>$PACKAGES
+		fi
+	fi
+}
+if [ -f /etc/debian_version ] ;
+then
+	sudo apt-get $1 $2 && update_file $1 $2
+fi
