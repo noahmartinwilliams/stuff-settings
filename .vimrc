@@ -1,5 +1,6 @@
 so ~/.vim/mod.vim
 
+map <F9> :mksession<space>
 map <F5> :so<space>~/.vim/program-mode.vim<enter>
 map <F4> <esc> :sh <enter>
 map W <c-w>w
