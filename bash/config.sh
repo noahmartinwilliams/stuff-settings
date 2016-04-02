@@ -12,7 +12,7 @@ fi
 
 if [ "$(date '+%d%b')" = "01Apr" ];
 then
-	PROMPT_COMMAND='PS1="C: $(pwd | sed s,/,\\\\\\\\,g)>"'
+	PROMPT_COMMAND='PS1="C: $(pwd | sed s,/,\\\\\\\\,g)>" '
 else
 	#credit for this goes to: http://maketecheasier.com/8-useful-and-interesting-bash-prompts/2009/09/04
 	PROMPT_COMMAND=' PS1=`RET=$?; if [[ $RET = "0" ]]; then
