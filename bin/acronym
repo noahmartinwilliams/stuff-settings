@@ -1,0 +1,25 @@
+#! /bin/bash
+
+source ~/bash/functions.sh
+
+WORD=$1
+X=1
+TMP=$(mktemp -d)
+WORDSOURCE=cool-words
+echo -n "$WORD" | tr 'A-Z' 'a-z' | while read -n 1 CHAR;
+do
+	echo $CHAR
+	cat cool-words | tr 'A-Z' 'a-z'| grep '^'$CHAR >$TMP/$X
+	X=$(($X + 1))
+done
+
+while true;
+do
+	X=1
+	while [ "$X" -lt $(echo $WORD | wc -c) ];
+	do
+		randline $TMP/$X
+		X=$(($X + 1));
+	done
+	read INPUT
+done

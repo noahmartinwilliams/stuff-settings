@@ -69,6 +69,7 @@ do
 			;;
 		e)
 			EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC '"$OPTARG)\"" #this neat little trick lets me avoid subshell bullshit
+			#TODO: remember what the neat little trick is, and add better comments.
 			;;
 	esac
 done
