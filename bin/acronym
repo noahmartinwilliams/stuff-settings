@@ -5,11 +5,10 @@ source ~/bash/functions.sh
 WORD=$1
 X=1
 TMP=$(mktemp -d)
-WORDSOURCE=cool-words
 echo -n "$WORD" | tr 'A-Z' 'a-z' | while read -n 1 CHAR;
 do
 	echo $CHAR
-	cat cool-words | tr 'A-Z' 'a-z'| grep '^'$CHAR >$TMP/$X
+	cat /usr/share/dict/words| tr 'A-Z' 'a-z'| grep '^'$CHAR >$TMP/$X
 	X=$(($X + 1))
 done
 
@@ -23,3 +22,5 @@ do
 	done
 	read INPUT
 done
+
+rm -rf $TMP
