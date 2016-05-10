@@ -5,7 +5,7 @@ REMOTE=0
 ON_DONE_COMMAND="exit 0"
 ON_ERROR_COMMAND="exit 1"
 EXCLUDE=""
-RSYNC_OPTS="-yrlutvH --no-inc-recursive --modify-window=1"
+RSYNC_OPTS="-rlutvH --no-inc-recursive --modify-window=1"
 SYNC='flock $(catpath $(catpath $DEST $(hostname)) $SRC) -c "rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/"'
 SYNCLINKDEST='flock $(catpath $(catpath $DEST $(hostname)) $SRC) -c "rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/"'
 function catpath {
@@ -28,7 +28,7 @@ function catpath {
 	fi
 }
 
-while getopts ":ri:u:d:s:yc:e:" COM_OPT;
+while getopts ":ri:u:d:s:yc:e:C" COM_OPT;
 do
 	case $COM_OPT in
 		y)
@@ -69,6 +69,9 @@ do
 			;;
 		e)
 			EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC '"$OPTARG)\"" #this neat little trick lets me avoid subshell bullshit
+			;;
+		C)
+			RSYNC_OPTS="$RSYNC_OPTS -c"
 			;;
 	esac
 done
