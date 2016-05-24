@@ -1,0 +1,11 @@
+auth     required       pam_securetty.so
+auth     required       pam_tally2.so deny=10 even_deny_root unlock_time=1200
+auth     required       pam_env.so
+auth     required       pam_unix.so
+auth     required       pam_nologin.so
+account  required       pam_unix.so
+password required       pam_unix.so
+session  required       pam_limits.so
+session  required       pam_unix.so
+session  required       pam_lastlog.so nowtmp
+session  optional       pam_mail.so standard
