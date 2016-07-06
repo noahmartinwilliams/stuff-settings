@@ -1,0 +1,1 @@
+wget -O - http://download.videolan.org/pub/debian/videolan-apt.asc | sudo apt-key add -

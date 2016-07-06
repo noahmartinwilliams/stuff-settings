@@ -56,3 +56,4 @@ alias mkae='make'
 alias ding='cvlc ~/Sound/ding.wav'
 alias common_words="sed 's/[[:space:],.;:?\"!]\+/\n/g' | tr 'A-Z' 'a-z' | sed '/^[[:space:]]*$/d' | sort | uniq -c | sort -h -r"
 alias mkdir='mkdir -p'
+alias data2hex='od -A n -v -t x1 | tr -d " "'

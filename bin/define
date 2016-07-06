@@ -1,0 +1,6 @@
+#! /bin/bash
+
+WORDS="$@"
+WORDS=$(echo "$WORDS" | sed 's/ /%20/g')
+
+curl dict://dict.org/d:$WORDS 2>/dev/null | sed -e '/^[0-9]\+.*$/d' -e '/^[[:space:]+]\%/d'

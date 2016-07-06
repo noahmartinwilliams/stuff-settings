@@ -4,5 +4,15 @@ rm -r .vim
 mkdir .vim 
 ln ~/.vim/* .vim/
 
+rm -r bash/
+cp -lR  ~/bash/ .
+rm bash/local-*
+
+rm -r bin/
+cp -lR ~/bin/ .
+
+rm -r sys/ || true
+cp -lR ~/sys .
+
 rm .vimrc
 ln ~/.vimrc .vimrc
