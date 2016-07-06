@@ -8,6 +8,7 @@ echo "Warning: This script may overwrite certain pre-existing files. Continue? [
 read CONTINUE
 if [ "$CONTINUE" = "y" ];
 then
+	[ -f ~/bash/chosen-colors ] && mv ~/bash/chosen-colors bash/
 	find "$SELF_DIR" -type d | sed '1d' | grep -v '.git' | xargs realpath | sed 's,'"$SELF_DIR"'/\(.*\),\1,g' | xargs -I % mkdir -p ~/%
 	find "$SELF_DIR" -type f | sed '1d' | grep -v 'update' | grep -v '.git' | xargs realpath | sed 's,'"$SELF_DIR"'/\(.*\),\1,g' | xargs -I % ln -f % ~/%
 	rm -f ~/install ~/LICENSE ~/README.md
