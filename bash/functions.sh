@@ -133,4 +133,11 @@ update()
 	fi
 }
 
+burnimage()
+{
+	IMG=$1
+	SIZE=$(du -b $IMG  | sed 's/^\(.*\)[[:space:]]\+.*$/\1/g')
+	sudo bash -c "dd if=$IMG | pv -s $SIZE | dd of=$2"
+}
+
 source ~/bash/local-functions.sh

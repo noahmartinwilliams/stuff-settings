@@ -74,3 +74,7 @@ install fuzz
 install antiword
 install freetts
 install qemu-system-arm
+install qemuctl
+install qemu-user-static
+install binfmt-support
+install proot
