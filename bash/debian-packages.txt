@@ -15,7 +15,6 @@ install gnucap
 install jshon
 install lcrack
 install libdvdcss2
-install mbrola
 install mplayer
 install mutextrace
 install octave
@@ -72,3 +71,6 @@ install valgrind
 install profanity
 install ntp
 install fuzz
+install antiword
+install freetts
+install qemu-system-arm
