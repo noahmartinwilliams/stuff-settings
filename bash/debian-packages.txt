@@ -78,3 +78,7 @@ install qemuctl
 install qemu-user-static
 install binfmt-support
 install proot
+install golang-go
+install golang-doc
+install gedit
+install xz-utils
