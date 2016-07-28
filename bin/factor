@@ -1,0 +1,12 @@
+#! /usr/bin/sbcl --script
+(defun cnt (x) (if (= x 0) '() (append (cnt (1- x)) `(,x))))
+(defun factor-test (num denom) (= (* (round (/ num denom)) denom) num))
+(defun factor-intern (x) (mapcar #'(lambda (y) (factor-test x y)) (cnt (round x))))
+(defun factor-test-list (bools nums) (if (eq bools nil) 
+	'() 
+	(if (first bools) 
+		(append `( ,(first nums)) (factor-test-list (rest bools) (rest nums))) 
+		(factor-test-list (rest bools) (rest nums)))))
+(defun factor (x) (reverse (rest (reverse (rest (factor-test-list (factor-intern x) (cnt x)))))))
+
+(format t "~A: ~{~A~^ ~}~%" (abs (parse-integer (nth 1 sb-ext:*posix-argv*))) (factor (abs (parse-integer (nth 1 sb-ext:*posix-argv*)))))

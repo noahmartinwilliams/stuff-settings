@@ -1,0 +1,93 @@
+#! /bin/bash
+
+DISP_OLD_ONLY=0
+DISP_NEW_ONLY=0
+DISP_MODIFIED=0
+
+#-m: modified files only (requires -o or -n )
+#-n: new files only (that were added in the snapshot )
+#-o: old files only (that were deleted)
+while getopts ":mon" COM_OPT ;
+do
+	case $COM_OPT in
+		m)
+			DISP_MODIFIED=1
+		;;
+		o)
+			DISP_OLD_ONLY=1
+			if [ "$DISP_NEW_ONLY" = 1 ];
+			then
+				echo "-o and -n are mutually exclusive"
+				exit 1
+			fi
+		;;
+		n)
+			if [ "$DISP_OLD_ONLY" = 1 ];
+			then
+				echo "-o and -n are mutually exclusive"
+				exit 1
+			fi
+			DISP_NEW_ONLY=1
+		;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+NEW=$(realpath $2 )
+OLD=$(realpath $1 )
+UNIQUE_PATHS=$(mktemp)
+PURE_RUN=0
+
+if [ "$DISP_OLD_ONLY" = 0 -a "$DISP_NEW_ONLY" = 0 -a "$DISP_MODIFIED" = 0 ];
+then
+	PURE_RUN=1
+fi
+
+TMP=$(mktemp)
+MODIFIED=$(mktemp)
+cd $OLD
+find . -type f -printf '%i:%p\n' >> $TMP
+cd $NEW
+find . -type f -printf '%i:%p\n' >>$TMP
+
+cat $TMP | sort | uniq -c | grep '^[[:space:]]\+1[[:space:]]\+.*$' | sed 's/^[[:space:]]\+1[[:space:]]\+[0-9]\+:\(.*\)$/\1/g' >$UNIQUE_PATHS 
+cat $UNIQUE_PATHS | sort | uniq -c | grep '^[[:space:]]\+2[[:space:]]\+.*$' | sed 's/^[[:space:]]\+2[[:space:]]\+\(.*\)/M\1/g' >> $MODIFIED
+
+if [ "$PURE_RUN" = 1 ] ;
+then
+	cat $MODIFIED
+elif [ "$DISP_MODIFIED" = 1 -a "$DISP_NEW_ONLY" = 1 -a "$DISP_OLD_ONLY" = 0 ];
+then
+	cat $MODIFIED | sed 's/^M\(.*\)$/\1/g'  | xargs -L 1 -I % realpath %
+elif [ "$DISP_MODIFIED" = 1 -a "$DISP_NEW_ONLY" = 0 -a "$DISP_OLD_ONLY" = 1 ];
+then
+	cd $OLD
+	cat $MODIFIED | sed 's/^M\(.*\)$/\1/g' | xargs -L 1 -I % realpath %
+fi
+
+
+cat $UNIQUE_PATHS | sort | uniq -u | while read PATH ;
+do
+	if [ -f "$PATH" ] ;
+	then
+		if [ "$DISP_NEW_ONLY" = 0 -a "$DISP_OLD_ONLY" = 0 -a "$DISP_MODIFIED" = 0 ] ;
+		then
+			echo "+$PATH"
+		elif [ "$DISP_OLD_ONLY" = 0 -a "$DISP_MODIFIED" = 0 ] ;
+		then
+			echo $( /usr/bin/realpath $NEW/$PATH ) # It keeps giving me "command not found" if I don't do this.
+		fi
+	else
+		if [ "$DISP_OLD_ONLY" = 0 -a "$DISP_NEW_ONLY" = 0 -a "$DISP_MODIFIED" = 0 ] ;
+		then
+			echo "-$PATH"
+		elif [ "$DISP_NEW_ONLY" = 0 -a "$DISP_MODIFIED" = 0 ] ;
+		then
+			echo "$(/usr/bin/realpath $OLD/$PATH)"
+		fi
+	fi
+done
+
+rm $TMP
+rm $UNIQUE_PATHS
+rm $MODIFIED

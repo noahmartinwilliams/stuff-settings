@@ -68,27 +68,6 @@ randline()
 	echo $(cat $1 | sed -n "$(echo $(($(($RANDOM%$LINES))+1)) | sed 's/\n//g')"'p')
 }
 
-
-
-addvocab()
-{
-	WORD=$(randline /usr/share/dict/words) 
-	if [ -z "$WORD" ]; 
-	then
-		return 1;
-	fi
-	echo "$WORD" >>~/Documents/words/$WORD
-	END=$(define "$WORD" | grep -n '^\.' | head -n 1 | cut -f 1 -d ':')
-	echo $END | grep '^[0-9]\+'
-	if [ "$?" != "0" ];
-	then
-		define $WORD | sed 's/\n//g' >>~/Documents/words/$WORD
-	else
-		define $WORD | sed -e "$END,"'$d' | sed 's/\n//g'   >>~/Documents/words/$WORD	
-	fi
-	vim ~/Documents/words/$WORD
-}
-
 loadcolor()
 {
 	TMP=$(mktemp)
@@ -112,7 +91,7 @@ mod2oct()
 
 urlxray()
 {
-curl -s http://urlxray.com/display.php?url=$1 | grep -o '<title>.*</title>' | sed 's/<title>.*--> \(.*\)<\/title>/\1/g';
+	curl -s http://urlxray.com/display.php?url=$1 | grep -o '<title>.*</title>' | sed 's/<title>.*--> \(.*\)<\/title>/\1/g';
 }
 
 tinyurl()
