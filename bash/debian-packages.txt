@@ -82,3 +82,6 @@ install golang-go
 install golang-doc
 install gedit
 install xz-utils
+install xtrace
+install tcpreen
+install logisim
