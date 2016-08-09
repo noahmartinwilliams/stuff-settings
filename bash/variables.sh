@@ -3,7 +3,7 @@ function addv
 	echo $* >>~/bash/variables.sh;
 }
 
-export MANPATH=~/bin/man/
+export MANPATH="$MANPATH"
 NULL=/dev/null
 CLI_WEB_BROWSER=links
 TMP=~/tmp
