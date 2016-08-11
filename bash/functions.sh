@@ -119,4 +119,9 @@ burnimage()
 	sudo bash -c "dd if=$IMG | pv -s $SIZE | dd of=$2"
 }
 
+function man() 
+{  
+	$(which man) "$@" || help2man "$@" | $(which man) -l - ;
+}
+
 source ~/bash/local-functions.sh
