@@ -132,13 +132,13 @@ function mkdirdest {
 	fi
 }
 
-TODAY=$(date '+%Y,%m,%d,%H%M')
+TODAY=$(date -u '+UTC%Y,%m,%d,%H%M')
 if [ -z "$(lsdest | grep $(hostname))" ];
 then
 	mkdirdest $(hostname)
 fi
 
-LATEST=$(lsdest $(catpath $(hostname) $SRC) | egrep '[0-9]+' | sort -nr |  head -n 1 )
+LATEST=$(lsdest $(catpath $(hostname) $SRC) | egrep 'UTC[0-9]{4},[0-9]{2},[0-9]{2},[0-9]{4}' | sort -nr |  head -n 1 )
 if [ ! -z "$LATEST" ];
 then
 	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
