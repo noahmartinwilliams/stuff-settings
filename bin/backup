@@ -69,7 +69,7 @@ do
 			fi
 			;;
 		e)
-			EXCLUDE='EXCLUDE="--exclude-from=$(catpath $SRC '"$OPTARG)\"" #this neat little trick lets me avoid subshell bullshit
+			EXCLUDE='EXCLUDE="--exclude-from='"$OPTARG\""' '
 			;;
 		C)
 			RSYNC_OPTS="$RSYNC_OPTS -c"
