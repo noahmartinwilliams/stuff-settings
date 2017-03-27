@@ -33,3 +33,5 @@ install vowpal-wabbit
 install xcfa
 install xclip
 install zip
+install ghostscript
+install cl-markdown
