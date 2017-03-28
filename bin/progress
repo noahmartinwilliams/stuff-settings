@@ -2,4 +2,4 @@
 
 [ -d ~/Documents/progress/ ] || mkdir -p ~/Documents/progress
 
-echo "$(date '+%H:%M:%S:') $1" >> ~/Documents/progress/$(date '+%Y-%m-%d')
+echo "$(date -u '+%H:%M:%S:') $1" >> ~/Documents/progress/$(date '+%Y-%m-%d')
