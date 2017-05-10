@@ -1,0 +1,77 @@
+#! /usr/bin/octave -q 
+
+[_, date_cells2] = unix('find . -maxdepth 1 -type d | sed "1d" ') ;
+date_cells3 = strsplit(date_cells2, '\n') ;
+
+date_cells = [] ;
+for i = 1 : length(date_cells3)
+	date_cells = [date_cells; date_cells3{i}] ;
+end
+
+dates = datenum(date_cells, './UTCyyyy,mm,dd,HHMM') ;
+
+
+args = argv();
+numSubDirs = 0;
+numSubFiles = 0;
+hf = figure('visible', 'off');
+set(hf, 'Visible', 'off')
+set(0, 'DefaultFigureVisible', 'off');
+dates = sort(dates) ;
+i = 1 ;
+leg = [] ;
+while i < nargin
+	if strcmp (args(i), '-s')
+		[_, sizes2] = system('ls | grep "^UTC" | xargs -L 1 -I % bash -c "du -bc % | tail -n 1" | sed "s/\([0-9]*\).*/\1/g"');
+		sizes3 = strsplit(sizes2, '\n') ;
+
+		sizes = [] ;
+		for c = 1 : length(sizes3)
+			sizes = [sizes; sizes3{c}] ;
+		end
+		plot(dates, str2double(sizes), args(i+1));
+		leg = [leg, 'Size of backups' ];
+		hold on;
+	elseif strcmp (args(i), '-d')
+		[_, numSubDirs2] = unix('ls | grep "^UTC" | xargs -L 1 -I % bash -c "find % -type d | wc -l " ')  ;
+		numSubDirs = str2double(cellstr(strsplit(numSubDirs2, '\n')))  ;
+
+		plot(dates, numSubDirs'(1:length(numSubDirs')-1), args(i+1));
+		hold on;
+
+		leg = [leg, 'Number of subdirectories'];
+		hold on;
+
+	elseif strcmp (args(i), '-f')
+		system('ls | grep "^UTC" | xargs -L 1 -I % bash -c "find % -type f | wc -l " > ../num-subfiles');
+
+		numSubFiles = load('../num-subfiles') ;
+
+		system('rm ../num-subfiles');
+
+		plot(dates, numSubFiles, args(i+1));
+		hold on;
+
+		leg = [leg, 'Number of files'];
+		hold on;
+	elseif strcmp (args(i), '-t')
+		totalNumberEntries = numSubFiles + numSubDirs ;
+		plot(dates, totalNumberEntries, args(i+1));
+		hold on;
+		leg = [leg, 'Total number of entries'];
+		
+	end
+	
+	i = i + 2 ;
+		
+end
+
+grid on;
+datetick(gca);
+xlabel('Time');
+ylabel('Number');
+title('Backup Data');
+
+legend(leg);
+
+print('backups.pdf') ;
