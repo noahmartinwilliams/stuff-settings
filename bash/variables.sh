@@ -13,5 +13,6 @@ PATH="/bin:/usr/bin:/usr/local/bin:/usr/games:/usr/local/games:/sbin:/usr/sbin:/
 Ki=1024
 Mi=$(( 1024 * 1024))
 Gi=$(( 1024 * 1024 * 1024))
+export HISTCONTROL=ignorespace
 
 source ~/bash/local-variables.sh
