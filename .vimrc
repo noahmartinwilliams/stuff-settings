@@ -6,6 +6,7 @@ map <F4> <esc> :sh <enter>
 map W <c-w>w
 set encoding=utf-8
 syntax on
+set backupcopy=yes
 set wildmode=longest
 set wildmenu
 
@@ -17,23 +18,25 @@ set autoindent
 
 autocmd BufNewFile,BufRead *.h so ~/.vim/header.vim
 autocmd BufRead,BufNewFile *.clj set filetype=clojure
+autocmd BufRead,BufNewFile *.m set filetype=octave
+autocmd filetype octave so ~/.vim/octave.vim
 autocmd filetype c so ~/.vim/c.vim
 autocmd filetype shell so ~/.vim/sh.vim
 autocmd filetype text so ~/.vim/txt.vim
 autocmd filetype make so ~/.vim/make.vim
 autocmd filetype python so ~/.vim/python.vim
-autocmd filetype perl so ~/.vim/perl.vim
 autocmd filetype assembly so ~/.vim/assembly.vim
 autocmd filetype LaTeX so ~/.vim/latex.vim
 autocmd filetype clojure so ~/.vim/clojure.vim
 
 autocmd BufNewFile * let fname=expand("%:p")
+autocmd BufNewFile *.m execute "autocmd BufWritePost ".fname." cal SetExecutableBit()"
 autocmd BufNewFile *.sh execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 autocmd BufNewFile *.rb execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 autocmd BufNewFile *.py execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 autocmd BufNewFile *.clj execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
-autocmd BufNewFile *.pl execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 
+autocmd BufNewFile *.m 0put = '#! /usr/bin/octave -q'
 autocmd BufNewFile *.py 0put = '#! /usr/bin/python'
 autocmd BufNewFile *.sh 0put = '#! /bin/bash'
 autocmd BufNewFile *.sh set autoindent
