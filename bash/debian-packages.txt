@@ -176,3 +176,6 @@ install scrub
 install libffi-dev
 install flowblade
 install r-base
+install libglfw3-dev
+install libglm-dev
+install libsoil-dev
