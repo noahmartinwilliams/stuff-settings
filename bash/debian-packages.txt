@@ -1,4 +1,6 @@
 install antiword
+install vim
+install sudo
 install apg
 install binfmt-support
 install bplay
@@ -140,9 +142,7 @@ install libghc-hsyslog-dev
 install libjsoncpp-dev
 install libghc-nats-dev
 install maxima-doc
-install hyperrogue
 install threadscope
-install opentyrian
 install vlc
 install frown
 install libghc-aeson-dev
@@ -154,7 +154,6 @@ install go-md2man
 install markdown
 install octave-symbolic
 install sbcl
-install geomview
 install screenruler
 install cmake
 install libffi-dev
@@ -167,7 +166,6 @@ install android-tools-adb
 install twidge
 install logisim
 install wings3d
-install rar
 install dos2unix
 install scons
 install lmms
@@ -179,3 +177,11 @@ install r-base
 install libglfw3-dev
 install libglm-dev
 install libsoil-dev
+install shutter
+install cpulimit
+install sqlite3
+install gparted
+install golang-objx-dev
+install gforth
+install r-base
+install libsox-dev
