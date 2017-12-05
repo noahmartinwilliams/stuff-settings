@@ -28,6 +28,7 @@ autocmd filetype python so ~/.vim/python.vim
 autocmd filetype assembly so ~/.vim/assembly.vim
 autocmd filetype LaTeX so ~/.vim/latex.vim
 autocmd filetype clojure so ~/.vim/clojure.vim
+autocmd filetype haskell execute "setlocal expandtab shiftwidth=4 softtabstop=0 tabstop=4"
 
 autocmd BufNewFile * let fname=expand("%:p")
 autocmd BufNewFile *.m execute "autocmd BufWritePost ".fname." cal SetExecutableBit()"
@@ -35,6 +36,7 @@ autocmd BufNewFile *.sh execute "autocmd BufWritePost ".fname." call SetExecutab
 autocmd BufNewFile *.rb execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 autocmd BufNewFile *.py execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
 autocmd BufNewFile *.clj execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
+autocmd BufNewFile *.hs execute "setlocal expandtab shiftwidth=4 softtabstop=0 tabstop=4"
 
 autocmd BufNewFile *.m 0put = '#! /usr/bin/octave -q'
 autocmd BufNewFile *.py 0put = '#! /usr/bin/python'
