@@ -1,0 +1,34 @@
+# 
+
+# deb cdrom:[Debian GNU/Linux 8.7.1 _Jessie_ - Official amd64 DVD Binary-1 20170116-11:01]/ jessie contrib main
+
+# deb cdrom:[Debian GNU/Linux 8.7.1 _Jessie_ - Official amd64 DVD Binary-1 20170116-11:01]/ jessie contrib main
+
+# Line commented out by installer because it failed to verify:
+deb http://security.debian.org/ jessie/updates main contrib
+# Line commented out by installer because it failed to verify:
+deb-src http://security.debian.org/ jessie/updates main contrib
+
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+
+# jessie-updates, previously known as 'volatile'
+# A network mirror was not selected during install.  The following entries
+# are provided as examples, but you should amend them as appropriate
+# for your mirror of choice.
+#
+# deb http://ftp.debian.org/debian/ jessie-updates main contrib
+# deb-src http://ftp.debian.org/debian/ jessie-updates main contrib
+
+# deb http://repo.steampowered.com/steam/ precise steam
+# deb http://deb.debian.org/debian jessie-backports main contrib
+# deb http://deb.debian.org/debian jessie-backports main contrib non-free
+deb http://dl.winehq.org/wine-builds/debian/ jessie main
+
+deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-5.0 main
+deb-src http://apt.llvm.org/jessie/ llvm-toolchain-jessie-5.0 main
+
+deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-4.0 main
+deb-src http://apt.llvm.org/jessie/ llvm-toolchain-jessie-4.0 main
+
+deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-6.0 main
+deb-src http://apt.llvm.org/jessie/ llvm-toolchain-jessie-6.0 main
