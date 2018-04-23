@@ -216,3 +216,4 @@ install aeson-pretty
 install libopenal-dev
 install libalut-dev
 install swi-prolog-odbc
+install libsqlite3-dev

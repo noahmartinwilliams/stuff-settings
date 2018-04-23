@@ -1,0 +1,4 @@
+#! /usr/bin/swipl -q
+
+:- initialization(main).
+main:- pack_install(prosqlite).

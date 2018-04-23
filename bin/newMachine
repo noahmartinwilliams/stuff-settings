@@ -1,0 +1,7 @@
+#! /bin/bash
+
+cd
+PATH=$PATH:~/bin
+sudo cat bash/debian-packages.txt | xargs apt-get 
+plRunOnNewMachine
+cat bash/ghc-packages | xargs cabal
