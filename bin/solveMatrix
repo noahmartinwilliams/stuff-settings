@@ -1,0 +1,8 @@
+#! /usr/bin/octave -q
+
+fname = argv(){1} ;
+Atmp = importdata(fname) ; 
+A = Atmp(:, 1:(end-1)) ;
+y = Atmp(:, end) ;
+x = inv(A) * y ;
+printf("%f\n", x);

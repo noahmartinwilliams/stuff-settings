@@ -213,3 +213,6 @@ install nmap
 install expect
 install libnvvm2
 install aeson-pretty
+install libopenal-dev
+install libalut-dev
+install swi-prolog-odbc
