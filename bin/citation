@@ -20,7 +20,10 @@ disconnect_db:- sqlite_disconnect('citations').
 point(Id, Name):- sqlite_query('citations', 'SELECT id, point FROM points;', row(Id, Name)).
 citation(PointId, Author, Title, Container, Contributors, Version, Number, Publisher, PubDate, AccDate, Location):-
 	nonvar(PointId),
-	atomic_concat('SELECT author, title, container, contributors, version, number, publisher, pubDate, accessDate, location FROM citation WHERE pointId == ', PointId, Command0),
+	atomic_concat('SELECT citeId FROM pointConn WHERE pointId == ', PointId, Atom0),
+	atomic_concat(Atom0, ';', Atom1),
+	sqlite_query('citations', Atom1, row(PointId2)),
+	atomic_concat('SELECT author, title, container, contributors, version, number, publisher, pubDate, accessDate, location FROM citation WHERE pointId == ', PointId2, Command0),
 	atomic_concat(Command0, ';', Command1),
 	sqlite_query('citations', Command1, row(AuthorId, Title, ContainerId, ContributorsId, Version, Number, PublisherId, PubDate, AccDate, Location)),
 	contributors(ContributorsId, Contributors),
