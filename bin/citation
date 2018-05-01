@@ -1,5 +1,6 @@
 #! /usr/bin/swipl -q
 
+% TODO: modify this to read HTML web pages and extract citation info automagically
 :- initialization(main).
 :- use_module(library(prosqlite)).
 
@@ -23,7 +24,7 @@ citation(PointId, Author, Title, Container, Contributors, Version, Number, Publi
 	atomic_concat('SELECT citeId FROM pointConn WHERE pointId == ', PointId, Atom0),
 	atomic_concat(Atom0, ';', Atom1),
 	sqlite_query('citations', Atom1, row(PointId2)),
-	atomic_concat('SELECT author, title, container, contributors, version, number, publisher, pubDate, accessDate, location FROM citation WHERE pointId == ', PointId2, Command0),
+	atomic_concat('SELECT author, title, container, contributors, version, number, publisher, pubDate, accessDate, location FROM citation WHERE contributors == ', PointId2, Command0), %I screwed up the formatting of the database initially. :/
 	atomic_concat(Command0, ';', Command1),
 	sqlite_query('citations', Command1, row(AuthorId, Title, ContainerId, ContributorsId, Version, Number, PublisherId, PubDate, AccDate, Location)),
 	contributors(ContributorsId, Contributors),
@@ -64,9 +65,13 @@ write_points([[Id, Name] | Rest]):-
 	writeln(Name),
 	write_points(Rest).
 
-write_citation([]):- writeln('.').
+write_citation([]):- writeln('').
 write_citation([[]|Tail]):-
 	write_citation(Tail).
+
+write_citation([''|Tail]):-
+	write_citation(Tail).
+
 write_citation([Head|Tail]):-
 	write(Head),
 	write('. '),
