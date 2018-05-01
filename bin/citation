@@ -1,0 +1,96 @@
+#! /usr/bin/swipl -q
+
+:- initialization(main).
+:- use_module(library(prosqlite)).
+
+doesnt_contain_item(_,[]).
+doesnt_contain_item(W, [W | _ ]):- !, fail.
+doesnt_contain_item(W, [_|Rest]):- doesnt_contain_item(W, Rest).
+
+contains_list(List):- \+ doesnt_contain_item('-l', List).
+contains_points(List):- \+ doesnt_contain_item('-p', List).
+contains_citation(List):- \+ doesnt_contain_item('-c', List).
+
+get_home(Home):- getenv('HOME', Home).
+connect_db:- get_home(Home),
+	atomic_concat(Home, '/data/db/citations', Atom),
+	sqlite_connect(Atom, 'citations').
+disconnect_db:- sqlite_disconnect('citations').
+
+point(Id, Name):- sqlite_query('citations', 'SELECT id, point FROM points;', row(Id, Name)).
+citation(PointId, Author, Title, Container, Contributors, Version, Number, Publisher, PubDate, AccDate, Location):-
+	nonvar(PointId),
+	atomic_concat('SELECT author, title, container, contributors, version, number, publisher, pubDate, accessDate, location FROM citation WHERE pointId == ', PointId, Command0),
+	atomic_concat(Command0, ';', Command1),
+	sqlite_query('citations', Command1, row(AuthorId, Title, ContainerId, ContributorsId, Version, Number, PublisherId, PubDate, AccDate, Location)),
+	contributors(ContributorsId, Contributors),
+	publisher(PublisherId, Publisher),
+	container(ContainerId, Container),
+	author(AuthorId, Author).
+
+author(Id, Auth):- atom_number(Atom, Id),
+	atomic_concat('SELECT name FROM author WHERE id == ', Atom, Command0),
+	atomic_concat(Command0, ';', Command1),
+	sqlite_query('citations', Command1, row(Auth)).
+
+container(Id, Cont):- atom_number(Atom, Id),
+	atomic_concat('SELECT name FROM container WHERE id == ', Atom, Command0),
+	atomic_concat(Command0, ';', Command1),
+	sqlite_query('citations', Command1, row(Cont)).
+
+publisher(Id, Pub):- atom_number(Atom, Id),
+	atomic_concat('SELECT name FROM publisher WHERE id == ', Atom, Command0),
+	atomic_concat(Command0, ';', Command1),
+	sqlite_query('citations', Command1, row(Pub)).
+
+contributors(ContributorsId, Contributors):- 
+	atom_number(Atom, ContributorsId),
+	atomic_concat('SELECT id1 FROM contributors WHERE id0 == ', Atom, Command0),
+	atomic_concat(Command0, ';', Command1),
+	findall(Contributor, sqlite_query('citations', Command1, row(Contributor)), Contributors).
+
+get_point([], _):- !, fail.
+get_point(['-p', Val|_], Val).
+get_point([_|Rest], Ret):- get_point(Rest, Ret).
+
+write_points([]).
+write_points([[Id, Name] | Rest]):-
+	atom_number(Atom, Id),
+	write(Atom),
+	write(':'),
+	writeln(Name),
+	write_points(Rest).
+
+write_citation([]):- writeln('.').
+write_citation([[]|Tail]):-
+	write_citation(Tail).
+write_citation([Head|Tail]):-
+	write(Head),
+	write('. '),
+	write_citation(Tail).
+
+write_citations([]).
+write_citations([Head|Tail]):-
+	write_citation(Head),
+	write_citations(Tail).
+
+main_intern:- current_prolog_flag(argv, Argv),
+	contains_list(Argv),
+	contains_citation(Argv),
+	contains_points(Argv),
+	get_point(Argv, Point),
+	findall(Citation, (citation(Point, Author, Title, Container, Contributors, Version, Number, Publisher, PubDate, AccDate, Location), Citation=[Author, Title, Container, Contributors, Version, Number, Publisher, PubDate, AccDate, Location]), List),
+	write_citations(List),
+	disconnect_db,
+	halt.
+
+main_intern:- current_prolog_flag(argv, Argv), 
+	contains_list(Argv), 
+	contains_points(Argv),
+	findall(Point, (point(Id, Name), Point=[Id, Name]), Points),
+	write_points(Points),
+	disconnect_db,
+	halt.
+
+main_intern:- disconnect_db, halt.
+main:- connect_db, main_intern.

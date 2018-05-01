@@ -217,3 +217,10 @@ install libopenal-dev
 install libalut-dev
 install swi-prolog-odbc
 install libsqlite3-dev
+install libncurses5-dev
+install libnvvm2
+install libcudart6.0
+install nvidia-cuda-dev
+install libcuda1
+install libnvidia-compiler
+install libxnvctrl-dev

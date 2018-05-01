@@ -1,4 +1,6 @@
 update
+install c2hs
+install llvm-hs -fshared-llvm
 install accelerate
 install accelerate-llvm-native
 install accelerate-llvm-ptx
@@ -6,3 +8,5 @@ install normaldistribution
 install text
 install split
 install random
+install repa-sndfile
+install accelerate-io
