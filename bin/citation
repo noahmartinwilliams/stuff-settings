@@ -1,7 +1,7 @@
 #! /usr/bin/swipl -q
 
 % TODO: modify this to read HTML web pages and extract citation info automagically
-:- initialization(main).
+%:- initialization(main).
 :- use_module(library(prosqlite)).
 :- use_module(library(sgml)).
 
@@ -26,6 +26,8 @@ extract_text([E|Rest], Ret):-
 
 get_title(Html, Ret):- get_title_tag_data(Html, Ret1),
 	atom_concat(Ret, ' - The New York Times', Ret1).
+get_title(Html, Ret):- get_title_tag_data(Html, Ret1),
+	atom_concat(Ret, ' | Alternet', Ret1).
 get_title(Html, Ret):- get_title_tag_data(Html, Ret).
 
 get_title_tag_data([], _):- !, fail.
