@@ -3,6 +3,36 @@
 % TODO: modify this to read HTML web pages and extract citation info automagically
 :- initialization(main).
 :- use_module(library(prosqlite)).
+:- use_module(library(sgml)).
+
+contains_tag(Tag, E):- \+ does_not_contain_tag(Tag, E).
+
+does_not_contain_tag(_, []):- !.
+does_not_contain_tag(Tag, [element(Tag, _, _)|_]):- !, fail.
+does_not_contain_tag(Tag, [element(_, _, List)|Rest]):- !,
+	does_not_contain_tag(Tag, List), !,
+	does_not_contain_tag(Tag, Rest), !.
+does_not_contain_tag(Tag, [_|Rest]):-
+	does_not_contain_tag(Tag, Rest), !.
+
+extract_text([], '').
+extract_text([element(_, _, L)|Rest], Ret):- !,
+	extract_text(L, R1),
+	extract_text(Rest, R2),
+	atomic_concat(R1, R2, Ret).
+extract_text([E|Rest], Ret):-
+	extract_text(Rest, R1),
+	atomic_concat(E, R1, Ret).
+
+get_title(Html, Ret):- get_title_tag_data(Html, Ret1),
+	atom_concat(Ret, ' - The New York Times', Ret1).
+get_title(Html, Ret):- get_title_tag_data(Html, Ret).
+
+get_title_tag_data([], _):- !, fail.
+get_title_tag_data([element(title, _, Text)|_], Ret):- !, extract_text(Text, Ret).
+get_title_tag_data([element(_, _, Data)|_], Ret):- get_title_tag_data(Data, Ret).
+get_title_tag_data([element(_, _, _)|Rest], Ret):- !, get_title_tag_data(Rest, Ret).
+get_title_tag_data([_|Rest], Ret):- get_title_tag_data(Rest, Ret).
 
 doesnt_contain_item(_,[]).
 doesnt_contain_item(W, [W | _ ]):- !, fail.
