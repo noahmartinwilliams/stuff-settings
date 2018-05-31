@@ -1,12 +1,13 @@
 update
 install c2hs
 install llvm-hs -fshared-llvm
-install accelerate
-install accelerate-llvm-native
-install accelerate-llvm-ptx
+install accelerate -fdebug
+install accelerate-llvm-native -fdebug
+install accelerate-llvm-ptx -fdebug
 install normaldistribution
 install text
 install split
 install random
 install repa-sndfile
 install accelerate-io
+install parallel

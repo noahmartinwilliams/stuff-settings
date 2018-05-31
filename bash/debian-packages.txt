@@ -224,3 +224,9 @@ install nvidia-cuda-dev
 install libcuda1
 install libnvidia-compiler
 install libxnvctrl-dev
+install nvidia-cuda-dev
+install nvidia-legacy-304xx-driver
+install bumblebee
+install libcudart7.5
+install libnvvm3
+install libcudart6.0

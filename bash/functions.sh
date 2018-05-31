@@ -2,8 +2,62 @@ source ~/bash/aliases.sh
 source ~/bash/variables.sh
 alias addf='cat >>~/bash/functions.sh';
 
+upBS() {
+	local X="$1"
+	Y=0
+	while [ "$Y" -lt "$X" ];
+	do
+		echo -e -n "\b"
+		Y=$(($Y + 1))
+	done
+	echo -e -n " \b"
+}
 up() 
 {
+	if [ "$1" = "-s" ] ;
+	then
+		name=$name1;
+		ret=$ret1;
+		dir=$dir1;
+		prompt=$prompt1;
+		command=$command1;
+		host=$host1;
+		PS1="\\[$ret\\]0: \\[$reset\\]\\[$name\\]\\u@\\[$reset\\]\\[$host\\]\\h \\[$reset\]\\[$dir\\]\\w\\[$reset\\]\\[$prompt\\]\$\\[$reset\\]\\[$command\\] "
+		TPS1=$(echo -e "$PS1" | sed 's/\\\[//g' | sed 's/\\\]//g' | sed 's/\\u/'"$(whoami)"'/g' | sed 's/\\h/'"$(hostname)"'/g' | sed 's/\\w/'"$(pwd | sed 's/\//\\\//g')"'/g')
+		WD=$(pwd)
+		NUMWD=$(echo "$WD" | sed -e 's/\\\\//g' -e 's/\\\///g' -e 's/^\/\(.*\)/\1/g' | tr '/' '\n' | wc -l)
+		X=$NUMWD
+		stty -echo
+		LEN=0
+		NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $undpur )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
+		TPS12=$(echo -e -n "$PS1" | sed -e 's/\\u/'"$(whoami)"'/g' -e 's/\\\[//g' -e 's/\\\]//g' | sed 's/\\h/'"$(hostname)"'/g' | sed 's/\\w/'"$NEWWD"'/g')
+		LEN=$(echo "$TPS12" | wc -c)
+		echo -e -n $TPS12
+		while read -rsn1 COMMAND ;
+		do
+			if [ "$COMMAND" = "h" ] ;
+			then
+				X=$(($X - 1))
+				upBS $LEN
+			elif [ "$COMMAND" = "l" ] ;
+			then
+				X=$(($X + 1))
+				upBS $LEN
+			else
+				stty sane
+				stty eof  
+				cd $(Y=0 ; while [ "$Y" -lt "$(($NUMWD - $X))" ]; do echo -n "../" ; Y=$(($Y + 1)) ; done)
+				echo -e -n "\n"
+				return
+			fi
+			NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $undpur )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
+			TPS12=$(echo -e -n "$PS1" | sed -e 's/\\u/'"$(whoami)"'/g' -e 's/\\\[//g' -e 's/\\\]//g' | sed 's/\\h/'"$(hostname)"'/g' | sed 's/\\w/'"$NEWWD"'/g')
+			LEN=$(echo "$TPS12" | wc -c)
+			echo -e -n $TPS12
+		done
+		return
+	fi
+
 	if [ "$1" = "" ];
 	then
 		cd ..;
