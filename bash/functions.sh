@@ -38,7 +38,10 @@ up()
 		do
 			if [ "$COMMAND" = "h" ] ;
 			then
-				X=$(($X - 1))
+				if [ "$X" != 1 ];
+				then
+					X=$(($X - 1))
+				fi
 				upBS $LEN
 			elif [ "$COMMAND" = "l" ] ;
 			then
