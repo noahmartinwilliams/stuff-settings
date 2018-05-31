@@ -74,7 +74,7 @@ function randomize {
 		echo "source ~/bash/colors" >>$NEWCLR
 		LINES=(`cat ~/bash/colors | sed '1d' | cut -f 1 -d '='`)
 		NUMLINES=$(cat ~/bash/colors | sed '1d' | cut -f 1 -d '=' | wc -l)
-		VARS=( 'ret1' 'ret2' 'name1' 'name2' 'host1' 'host2' 'dir1' 'dir2' 'prompt1' 'prompt2' 'command1' 'command2' )
+		VARS=( 'ret1' 'ret2' 'name1' 'name2' 'host1' 'host2' 'dir1' 'dir2' 'prompt1' 'prompt2' 'command1' 'command2' 'dirsel' )
 		for VAR in "${VARS[@]}"
 		do
 			echo "$VAR=\$${LINES[$(($RANDOM % $NUMLINES))]}" >>$NEWCLR

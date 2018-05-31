@@ -16,6 +16,7 @@ up()
 {
 	if [ "$1" = "-s" ] ;
 	then
+		source ~/bash/chosen-colors
 		name=$name1;
 		ret=$ret1;
 		dir=$dir1;
@@ -29,7 +30,7 @@ up()
 		X=$NUMWD
 		stty -echo
 		LEN=0
-		NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $undpur )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
+		NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $dirsel )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
 		TPS12=$(echo -e -n "$PS1" | sed -e 's/\\u/'"$(whoami)"'/g' -e 's/\\\[//g' -e 's/\\\]//g' | sed 's/\\h/'"$(hostname)"'/g' | sed 's/\\w/'"$NEWWD"'/g')
 		LEN=$(echo "$TPS12" | wc -c)
 		echo -e -n $TPS12
@@ -50,7 +51,7 @@ up()
 				echo -e -n "\n"
 				return
 			fi
-			NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $undpur )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
+			NEWWD=$(echo "$WD" | sed 's/^\/\(.*\)/\1/g' | sed 's/\//\n/g' | sed "$X"'s/^\(.*\)$/'"$(echo -e $dirsel )"'\1'"$(echo -e $dir1)"'/g' | tr '\n' '/' | sed 's/\//\\\//g')
 			TPS12=$(echo -e -n "$PS1" | sed -e 's/\\u/'"$(whoami)"'/g' -e 's/\\\[//g' -e 's/\\\]//g' | sed 's/\\h/'"$(hostname)"'/g' | sed 's/\\w/'"$NEWWD"'/g')
 			LEN=$(echo "$TPS12" | wc -c)
 			echo -e -n $TPS12
