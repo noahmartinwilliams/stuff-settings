@@ -14,5 +14,6 @@ Ki=1024
 Mi=$(( 1024 * 1024))
 Gi=$(( 1024 * 1024 * 1024))
 export HISTCONTROL=ignorespace
+export GOPATH=$HOME
 
 source ~/bash/local-variables.sh
