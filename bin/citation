@@ -1,7 +1,7 @@
 #! /usr/bin/swipl -q
 
 % TODO: modify this to read HTML web pages and extract citation info automagically
-%:- initialization(main).
+:- initialization(main).
 :- use_module(library(prosqlite)).
 :- use_module(library(sgml)).
 
@@ -14,6 +14,18 @@ does_not_contain_tag(Tag, [element(_, _, List)|Rest]):- !,
 	does_not_contain_tag(Tag, Rest), !.
 does_not_contain_tag(Tag, [_|Rest]):-
 	does_not_contain_tag(Tag, Rest), !.
+
+is_site_name([]):- !, fail.
+is_site_name([property = 'og:site_name' | _]).
+is_site_name([_ | Rest]):- is_site_name(Rest).
+
+get_site_name_intern([content = Name|_], Name).
+get_site_name_intern([_ | Rest], Ret):- get_site_name_intern(Rest, Ret).
+
+get_site_name([], _):- !, fail.
+get_site_name([element('meta', List, _)|_], Name):- is_site_name(List), get_site_name_intern(List, Name).
+get_site_name([element(_, _, List)|_], Name):- get_site_name(List, Name).
+get_site_name([_|Rest], Name):- get_site_name(Rest, Name).
 
 extract_text([], '').
 extract_text([element(_, _, L)|Rest], Ret):- !,

@@ -11,3 +11,4 @@ install random
 install repa-sndfile
 install accelerate-io
 install parallel
+install Unique
