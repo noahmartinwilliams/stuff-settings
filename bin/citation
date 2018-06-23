@@ -48,6 +48,47 @@ get_title_tag_data([element(_, _, Data)|_], Ret):- get_title_tag_data(Data, Ret)
 get_title_tag_data([element(_, _, _)|Rest], Ret):- !, get_title_tag_data(Rest, Ret).
 get_title_tag_data([_|Rest], Ret):- get_title_tag_data(Rest, Ret).
 
+
+is_publish_date([]):- !, fail.
+is_publish_date([itemprop = 'datePublished'|_]).
+is_publish_date([_|Rest]):- is_publish_date(Rest).
+
+%<meta property="article:published" itemprop="datePublished" content="2012-09-10T21:00:24-04:00" />
+convert_date(Date, Date2):- atom_concat(Year, Rest, Date),
+	atom_length(Year, 4),
+	atom_concat('-', Rest2, Rest),
+	atom_concat(Month, Rest3, Rest2),
+	atom_length(Month, 2),
+	atom_concat('-', Rest4, Rest3),
+	atom_concat(Day, Rest5, Rest4),
+	atom_length(Day, 2),
+	atom_concat('T', Rest6, Rest5),
+	atom_concat(Hour, Rest7, Rest6),
+	atom_length(Hour, 2),
+	atom_concat(':', Rest8, Rest7),
+	atom_concat(Minute, _, Rest8),
+	atom_length(Minute, 2),
+	make_date(Year, Month, Day, Hour, Minute, Date2).
+
+make_date(Year, Month, Day, Hour, Minute, Ret):-
+	atom_concat(Year, '/', Date),
+	atom_concat(Date, Month, Date1),
+	atom_concat(Date1, '/', Date2),
+	atom_concat(Date2, Day, Date3),
+	atom_concat(Date3, ',', Date4),
+	atom_concat(Date4, Hour, Date5),
+	atom_concat(Date5, ':', Date6),
+	atom_concat(Date6, Minute, Ret).
+
+get_date_published_intern([], _):- !, fail.
+get_date_published_intern([content = Date|_], Date2):- convert_date(Date, Date2).
+get_date_published_intern([_|Rest], Date):- get_date_published_intern(Rest, Date).
+
+get_date_published([], _):- !, fail.
+get_date_published([element(meta, PublishInfo, _)|_], Date):- is_publish_date(PublishInfo), get_date_published_intern(PublishInfo, Date).
+get_date_published([element(_, _, Rest)|_], Date):- get_date_published(Rest, Date).
+get_date_published([_|Rest], Date):- get_date_published(Rest, Date).
+
 doesnt_contain_item(_,[]).
 doesnt_contain_item(W, [W | _ ]):- !, fail.
 doesnt_contain_item(W, [_|Rest]):- doesnt_contain_item(W, Rest).
@@ -55,6 +96,8 @@ doesnt_contain_item(W, [_|Rest]):- doesnt_contain_item(W, Rest).
 contains_list(List):- \+ doesnt_contain_item('-l', List).
 contains_points(List):- \+ doesnt_contain_item('-p', List).
 contains_citation(List):- \+ doesnt_contain_item('-c', List).
+contains_add(List):- \+ doesnt_contain_item('-a', List).
+contains_url(List):- \+ doesnt_contain_item('-u', List).
 
 get_home(Home):- getenv('HOME', Home).
 connect_db:- get_home(Home),
@@ -101,6 +144,10 @@ get_point([], _):- !, fail.
 get_point(['-p', Val|_], Val).
 get_point([_|Rest], Ret):- get_point(Rest, Ret).
 
+get_url([], _):- !, fail.
+get_url(['-u', Url|_], Url).
+get_url([_|Rest], Ret):- get_url(Rest, Ret).
+
 write_points([]).
 write_points([[Id, Name] | Rest]):-
 	atom_number(Atom, Id),
@@ -126,6 +173,31 @@ write_citations([Head|Tail]):-
 	write_citation(Head),
 	write_citations(Tail).
 
+get_tmp_name(TmpName):-
+	process_create(path(mktemp), ['-u', '--suffix=.html'], [stdout(pipe(Out))]), 
+	read_line_to_codes(Out, Str), 
+	atom_codes(TmpName, Str).
+
+dload(Url, Name):-
+	process_create(path(wget), ['-O', Name, '--quiet', Url], []).
+
+on_backtrack(_).
+on_backtrack(G):- !, G, fail.
+%main_intern:- current_prolog_flag(argv, Argv),
+	%contains_add(Argv),
+	%get_url(Argv, Url),
+	%get_tmp_name(TmpName),
+	%on_backtrack(delete_file(TmpName)),
+	%dload(Url, TmpName),
+	%load_html(TmpName, Elements, [syntax_errors(quiet)]),
+	%get_title(Elements, Name),
+	%writeln(Name),
+	%%get_site_name(Elements, SiteName),
+	%%writeln(SiteName),
+	%get_date_published(Elements, PublishDate),
+	%writeln(PublishDate),
+	%delete_file(TmpName),
+	%halt.
 main_intern:- current_prolog_flag(argv, Argv),
 	contains_list(Argv),
 	contains_citation(Argv),
