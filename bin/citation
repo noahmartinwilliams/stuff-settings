@@ -1,6 +1,8 @@
 #! /usr/bin/swipl -q
 
 % TODO: modify this to read HTML web pages and extract citation info automagically
+% TODO: modify this to read youtube pages for citation info
+% TODO: modify this to read pdf files for citation info
 :- initialization(main).
 :- use_module(library(prosqlite)).
 :- use_module(library(sgml)).
@@ -48,12 +50,13 @@ get_title_tag_data([element(_, _, Data)|_], Ret):- get_title_tag_data(Data, Ret)
 get_title_tag_data([element(_, _, _)|Rest], Ret):- !, get_title_tag_data(Rest, Ret).
 get_title_tag_data([_|Rest], Ret):- get_title_tag_data(Rest, Ret).
 
-
 is_publish_date([]):- !, fail.
+%<span class="date-display-single" property="dc:date" datatype="xsd:dateTime" content="2018-06-25T13:12:00-07:00">
+is_publish_date([class = 'date-display-single'|_]).
 is_publish_date([itemprop = 'datePublished'|_]).
+is_publish_date([name = 'date'|_]).
 is_publish_date([_|Rest]):- is_publish_date(Rest).
 
-%<meta property="article:published" itemprop="datePublished" content="2012-09-10T21:00:24-04:00" />
 convert_date(Date, Date2):- atom_concat(Year, Rest, Date),
 	atom_length(Year, 4),
 	atom_concat('-', Rest2, Rest),
@@ -69,6 +72,16 @@ convert_date(Date, Date2):- atom_concat(Year, Rest, Date),
 	atom_concat(Minute, _, Rest8),
 	atom_length(Minute, 2),
 	make_date(Year, Month, Day, Hour, Minute, Date2).
+convert_date(Date, Date2):- 
+	atom_concat(Year, Rest, Date),
+	atom_length(Year, 4),
+	atom_concat('-', Rest2, Rest),
+	atom_concat(Month, Rest3, Rest2),
+	atom_length(Month, 2),
+	atom_concat('-', Rest4, Rest3),
+	atom_concat(Day, _, Rest4),
+	atom_length(Day, 2),
+	make_date(Year, Month, Day, '00', '00', Date2).
 
 make_date(Year, Month, Day, Hour, Minute, Ret):-
 	atom_concat(Year, '/', Date),
@@ -85,7 +98,9 @@ get_date_published_intern([content = Date|_], Date2):- convert_date(Date, Date2)
 get_date_published_intern([_|Rest], Date):- get_date_published_intern(Rest, Date).
 
 get_date_published([], _):- !, fail.
+get_date_published([element(time, DateInfo, _)|_], Date):- get_date_info(DateInfo, Date).
 get_date_published([element(meta, PublishInfo, _)|_], Date):- is_publish_date(PublishInfo), get_date_published_intern(PublishInfo, Date).
+get_date_published([element(span, PublishInfo, _)|_], Date):- is_publish_date(PublishInfo), get_date_published_intern(PublishInfo, Date).
 get_date_published([element(_, _, Rest)|_], Date):- get_date_published(Rest, Date).
 get_date_published([_|Rest], Date):- get_date_published(Rest, Date).
 
@@ -183,21 +198,23 @@ dload(Url, Name):-
 
 on_backtrack(_).
 on_backtrack(G):- !, G, fail.
-%main_intern:- current_prolog_flag(argv, Argv),
-	%contains_add(Argv),
-	%get_url(Argv, Url),
-	%get_tmp_name(TmpName),
-	%on_backtrack(delete_file(TmpName)),
-	%dload(Url, TmpName),
-	%load_html(TmpName, Elements, [syntax_errors(quiet)]),
-	%get_title(Elements, Name),
-	%writeln(Name),
-	%%get_site_name(Elements, SiteName),
-	%%writeln(SiteName),
-	%get_date_published(Elements, PublishDate),
-	%writeln(PublishDate),
-	%delete_file(TmpName),
-	%halt.
+main_intern:- current_prolog_flag(argv, Argv),
+	contains_add(Argv),
+	get_url(Argv, Url),
+	get_tmp_name(TmpName),
+	on_backtrack(delete_file(TmpName)),
+	dload(Url, TmpName),
+	load_html(TmpName, Elements, [syntax_errors(quiet)]),
+	get_title(Elements, Name),
+	writeln(Name),
+	get_site_name(Elements, SiteName),
+	writeln('site name:'),
+	writeln(SiteName),
+	get_date_published(Elements, PublishDate),
+	writeln('date:'),
+	writeln(PublishDate),
+	delete_file(TmpName),
+	halt.
 main_intern:- current_prolog_flag(argv, Argv),
 	contains_list(Argv),
 	contains_citation(Argv),
