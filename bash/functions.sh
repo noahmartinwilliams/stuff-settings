@@ -177,9 +177,29 @@ burnimage()
 	sudo bash -c "dd if=$IMG | pv -s $SIZE | dd of=$2"
 }
 
-function man() 
+man() 
 {  
 	$(which man) "$@" || help2man "$@" | $(which man) -l - ;
+}
+
+adjustDecimalPlaces()
+{
+	NUMBER=$1
+	NUMDECPLACES=$2
+	if [ "$(echo -n $NUMBER | wc -c)" -lt $NUMDECPLACES ];
+	then
+		STR=""
+		X=$(($NUMDECPLACES - $(echo $NUMBER | wc -c)))
+		STR2=$(while [ "$X" -gt 0 ] ;
+		do
+			STR=0"$STR"
+			X=$(($X - 1))
+			echo "$STR"
+		done | tail -n 1)
+		echo "0$STR2""$NUMBER"
+	else
+		echo $NUMBER
+	fi
 }
 
 source ~/bash/local-functions.sh
