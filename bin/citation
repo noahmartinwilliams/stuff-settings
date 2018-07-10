@@ -51,7 +51,6 @@ get_title_tag_data([element(_, _, _)|Rest], Ret):- !, get_title_tag_data(Rest, R
 get_title_tag_data([_|Rest], Ret):- get_title_tag_data(Rest, Ret).
 
 is_publish_date([]):- !, fail.
-%<span class="date-display-single" property="dc:date" datatype="xsd:dateTime" content="2018-06-25T13:12:00-07:00">
 is_publish_date([class = 'date-display-single'|_]).
 is_publish_date([itemprop = 'datePublished'|_]).
 is_publish_date([name = 'date'|_]).
@@ -103,6 +102,27 @@ get_date_published([element(meta, PublishInfo, _)|_], Date):- is_publish_date(Pu
 get_date_published([element(span, PublishInfo, _)|_], Date):- is_publish_date(PublishInfo), get_date_published_intern(PublishInfo, Date).
 get_date_published([element(_, _, Rest)|_], Date):- get_date_published(Rest, Date).
 get_date_published([_|Rest], Date):- get_date_published(Rest, Date).
+
+contains_author([]):- !, fail.
+contains_author([rel = 'author'|_]).
+contains_author([name = 'author'|_]).
+contains_author([_|Rest]):- contains_author(Rest).
+
+get_article_author([], _):- !, fail.
+get_article_author([content = Name|_], Name).
+get_article_author([_|Rest], Name):- get_article_author(Rest, Name).
+
+get_author_link([], _):- !, fail.
+get_author_link([Ret|_], Ret):- atomic(Ret). 
+get_author_link([element(_, _, Atomic)|_], Atomic):- atomic(Atomic).
+get_author_link([element(_, _, Rest)|_], Atomic):- get_author_link(Rest, Atomic).
+get_author_link([_|Rest], Ret):- get_author_link(Rest, Ret).
+
+get_author([], _):- !, fail.
+get_author([element(meta, Info, _)|_], Ret):- contains_author(Info), get_article_author(Info, Ret).
+get_author([element(a, Author, Contents)|_], Ret):- contains_author(Author), get_author_link(Contents, Ret). 
+get_author([element(_, _, Rest)|_], Ret):- get_author(Rest, Ret).
+get_author([_|Rest], Ret):- get_author(Rest, Ret).
 
 doesnt_contain_item(_,[]).
 doesnt_contain_item(W, [W | _ ]):- !, fail.
@@ -203,6 +223,7 @@ main_intern:- current_prolog_flag(argv, Argv),
 	get_url(Argv, Url),
 	get_tmp_name(TmpName),
 	on_backtrack(delete_file(TmpName)),
+	on_backtrack(writeln('not all fields could be found.')),
 	dload(Url, TmpName),
 	load_html(TmpName, Elements, [syntax_errors(quiet)]),
 	get_title(Elements, Name),
@@ -213,6 +234,8 @@ main_intern:- current_prolog_flag(argv, Argv),
 	get_date_published(Elements, PublishDate),
 	writeln('date:'),
 	writeln(PublishDate),
+	get_author(Elements, Author),
+	writeln(Author),
 	delete_file(TmpName),
 	halt.
 main_intern:- current_prolog_flag(argv, Argv),
