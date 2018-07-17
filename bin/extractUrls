@@ -1,0 +1,30 @@
+#! /usr/bin/swipl -q
+
+:- initialization(main).
+:- use_module(library(sgml)).
+
+get_href([], _):- !, fail.
+get_href([href = Href | _], Href).
+get_href([_|Rest], Ret):- get_href(Rest, Ret).
+
+
+get_link([], _):- !, fail.
+get_link([element('a', Stuff, _)|_], Ret):- get_href(Stuff, Ret).
+get_link([element(_, _, E)|_], Ret):- get_link(E, Ret).
+get_link([_|Rest], Ret):- get_link(Rest, Ret).
+
+get_all_links(E, Ret):- findall(X, get_link(E, X), Ret).
+
+print_links([]).
+print_links([Head|Tail]):- writeln(Head), print_links(Tail).
+
+main_intern([]):- halt.
+main_intern([Head|Tail]):- atomic(Head), !,
+	load_html(Head, Elements, [syntax_errors(quiet), max_errors(-1)]), !,
+	get_all_links(Elements, Links), !,
+	print_links(Links), !,
+	main_intern(Tail).
+main_intern(_):- halt(1).
+
+main:- current_prolog_flag(argv, Argv), main_intern(Argv).
+main:- halt(1).
