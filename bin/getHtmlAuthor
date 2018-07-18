@@ -1,0 +1,23 @@
+#! /usr/bin/swipl -q
+
+:- initialization(main).
+:- use_module(library(sgml)).
+
+p_has_author([]):- !, fail.
+p_has_author([itemprop = 'author creator'|_]).
+p_has_author([_|Rest]):- p_has_author(Rest).
+
+extract_text([], '').
+extract_text([Str|Rest], Ret):- atomic(Str), extract_text(Rest, Ret2), atomic_concat(Str, Ret2, Ret).
+extract_text([element(_, _, List)|Rest], Ret):- extract_text(List, Ret1), extract_text(Rest, Ret2), atomic_concat(Ret1, Ret2, Ret).
+extract_text([_|Rest], Ret):- extract_text(Rest, Ret).
+
+adjust_text(Str, Ret):- atomic(Str), atom_concat('By ', Ret, Str).
+
+get_author([], _):- !, fail.
+get_author([element(p, Variables, SubUnits)|_], Ret):- p_has_author(Variables), extract_text(SubUnits, Ret1), adjust_text(Ret1, Ret).
+get_author([element(_, _, List)|_], Ret):- get_author(List, Ret).
+get_author([_|Rest], Ret):- get_author(Rest, Ret).
+
+main:- current_prolog_flag(argv, [Argv|_]), load_html(Argv, Elements, [syntax_errors(quiet)]), get_author(Elements, Author), writeln(Author), halt.
+main:- halt(1).
