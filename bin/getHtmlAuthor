@@ -14,10 +14,32 @@ extract_text([_|Rest], Ret):- extract_text(Rest, Ret).
 
 adjust_text(Str, Ret):- atomic(Str), atom_concat('By ', Ret, Str).
 
+get_article_author_info(Input, Ret):-
+	nonvar(Input),
+	var(Ret),
+	atom_concat('https://www.facebook.com/pages/', Rest, Input),
+	atom_concat(Name, Next, Rest),
+	atom_concat('/', _, Next),
+	atom_concat(FirstName, Next2, Name),
+	atom_concat('-', LastName, Next2),
+	atom_concat(FirstName, ' ', Next3),
+	atom_concat(Next3, LastName, Ret).
+
+get_meta_article_author([], _):- !, fail.
+get_meta_article_author([content = Info|_], Ret):- get_article_author_info(Info, Ret).
+get_meta_article_author([_|Rest], Ret):- get_meta_article_author(Rest, Ret).
+
+%<span class="author vcard">
 get_author([], _):- !, fail.
+get_author([''|Rest], Ret):- get_author(Rest, Ret).
+get_author([element(meta, [property = 'article:author' | Rest], _)|_], Ret):- get_meta_article_author(Rest, Ret).
 get_author([element(p, Variables, SubUnits)|_], Ret):- p_has_author(Variables), extract_text(SubUnits, Ret1), adjust_text(Ret1, Ret).
 get_author([element(_, _, List)|_], Ret):- get_author(List, Ret).
 get_author([_|Rest], Ret):- get_author(Rest, Ret).
 
-main:- current_prolog_flag(argv, [Argv|_]), load_html(Argv, Elements, [syntax_errors(quiet)]), get_author(Elements, Author), writeln(Author), halt.
+main:- current_prolog_flag(argv, [Argv|_]),	
+	load_html(Argv, Elements, [syntax_errors(quiet)]), 
+	get_author(Elements, Author), 
+	writeln(Author), 
+	halt.
 main:- halt(1).
