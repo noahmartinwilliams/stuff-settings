@@ -1,5 +1,6 @@
-#! /usr/bin/swipl -q
+#!/usr/bin/swipl -s
 
+:- set_prolog_flag(verbose, silent).
 :- initialization(main).
 :- use_module(library(sgml)).
 
@@ -37,9 +38,11 @@ get_author([element(p, Variables, SubUnits)|_], Ret):- p_has_author(Variables), 
 get_author([element(_, _, List)|_], Ret):- get_author(List, Ret).
 get_author([_|Rest], Ret):- get_author(Rest, Ret).
 
-main:- current_prolog_flag(argv, [Argv|_]),	
+main_intern:- current_prolog_flag(argv, [Argv|_]),	
 	load_html(Argv, Elements, [syntax_errors(quiet)]), 
 	get_author(Elements, Author), 
 	writeln(Author), 
 	halt.
-main:- halt(1).
+main_intern:- halt(1).
+
+main:- catch(main_intern, E, (print_message(error, E), halt(1))).
