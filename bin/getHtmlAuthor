@@ -31,9 +31,11 @@ get_meta_article_author([content = Info|_], Ret):- get_article_author_info(Info,
 get_meta_article_author([_|Rest], Ret):- get_meta_article_author(Rest, Ret).
 
 %<span class="author vcard">
+% <meta name="citation_author" content="Katherine A. Cronin"/>
 get_author([], _):- !, fail.
 get_author([''|Rest], Ret):- get_author(Rest, Ret).
 get_author([element(meta, [property = 'article:author' | Rest], _)|_], Ret):- get_meta_article_author(Rest, Ret).
+get_author([element(meta, [name = 'citation_author' , content = Name | _], _)|_], Name).
 get_author([element(p, Variables, SubUnits)|_], Ret):- p_has_author(Variables), extract_text(SubUnits, Ret1), adjust_text(Ret1, Ret).
 get_author([element(_, _, List)|_], Ret):- get_author(List, Ret).
 get_author([_|Rest], Ret):- get_author(Rest, Ret).
