@@ -1,0 +1,18 @@
+#!/usr/bin/swipl -q
+
+:- initialization(main).
+:- use_module(library(sgml)).
+
+get_publisher([], _):- !, fail.
+get_publisher([element(meta, [name = 'citation_publisher', content = C|_], _)|_], C).
+get_publisher([element(_, _, List)|_], Ret):- get_publisher(List, Ret).
+get_publisher([_|Rest], Ret):- get_publisher(Rest, Ret).
+
+main_intern:- current_prolog_flag(argv, [Argv|_]),
+	load_html(Argv, Elements, [syntax_errors(quiet)]),
+	get_publisher(Elements, Publisher),
+	writeln(Publisher),
+	halt.
+main_intern:- halt(1).
+
+main:- catch(main_intern, E, (print_message(error, E), halt(1))).
