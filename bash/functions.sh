@@ -167,6 +167,9 @@ update()
 	if [ -f /etc/debian_version ] ;
 	then
 		[ "$1" = "-y" ] && sudo bash -c 'apt-get update && apt-get -y dist-upgrade' || sudo bash -c 'apt-get update && apt-get dist-upgrade'
+	elif [ -f /etc/arch-release ] ;
+	then
+		sudo pacman -Syu
 	fi
 }
 

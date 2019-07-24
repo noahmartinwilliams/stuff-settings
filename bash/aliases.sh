@@ -53,8 +53,9 @@ alias macros='gcc -dM -E - </dev/null'
 alias escname="sed -e 's/\\([[:space:]]\\)/\\\\\\1/g' -e 's/(/\\\\(/g' -e 's/)/\\\\)/g' -e 's/\\$/\\\\$/g' -e 's/~/\\\\~/g' -e 's/\\*/\\\\*/g' "
 alias su='su -l '
 alias mkae='make'
-alias ding='cvlc ~/Sound/ding.wav'
+alias ding='mplayer -quiet ~/Sound/ding.wav > /dev/null 2> /dev/null'
 alias common_words="sed 's/[[:space:],.;:?\"!]\+/\n/g' | tr 'A-Z' 'a-z' | sed '/^[[:space:]]*$/d' | sort | uniq -c | sort -h -r"
 alias mkdir='mkdir -p'
 alias data2hex='od -A n -v -t x1 | tr -d " "'
 alias hex2dec='tr "a-z" "A-Z" | xargs -I % bash -c "echo \"ibase=16; %\" | bc"'
+alias topmem='top -o "%MEM"'

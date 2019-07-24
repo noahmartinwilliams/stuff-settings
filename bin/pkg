@@ -11,9 +11,22 @@ update_file() {
 		else
 			echo "$1 $2" >>$PACKAGES
 		fi
+	elif [ -f /etc/arch-release ] ;
+	then
+		PACKAGES=~/bash/arch-packages.txt
+		if [ "$1" = "install" ];
+		then
+			echo "-S $2" >> $PACKAGES
+		fi
 	fi
 }
 if [ -f /etc/debian_version ] ;
 then
 	sudo apt-get $1 $2 && update_file $1 $2
+elif [ -f /etc/arch-release ] ;
+then
+	if [ "$1" = install ] ;
+	then
+		sudo pacman -S $2 && update_file $1 $2
+	fi
 fi

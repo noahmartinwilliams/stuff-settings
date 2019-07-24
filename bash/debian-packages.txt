@@ -210,3 +210,14 @@ install xscreensaver-gl-extra
 install xscreensaver-screensaver-bsod
 install youtube-dl
 install zip
+install libgraphicsmagick1-dev
+install imagemagick
+install libmagickcore-dev
+install libmagickwand-dev
+install cmatrix
+install bmon
+install tree
+install gnat
+install libmagickwand-dev
+install libmagickwand-6-headers
+install docker
