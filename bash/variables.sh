@@ -15,5 +15,7 @@ Mi=$(( 1024 * 1024))
 Gi=$(( 1024 * 1024 * 1024))
 export HISTCONTROL=ignorespace
 export GOPATH=$HOME
+export EDITOR=vim
+export BROWSER=w3m
 
 source ~/bash/local-variables.sh

@@ -94,3 +94,9 @@
 -S cmucl
 -S arduino-avr-core
 -S gource
+-S dante
+-S notmuch
+-S scdoc
+-S parallel
+-S xclip
+-S hub

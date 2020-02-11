@@ -1,0 +1,24 @@
+#! /usr/bin/swipl  -q
+
+:- set_prolog_flag(verbose, silent).
+:- initialization(main).
+:- use_module(library(prosqlite)).
+
+get_origin(X):- sqlite_query('storage', 'SELECT * FROM origin;', X).
+get_moz_places(X):- sqlite_query('places', 'SELECT * FROM moz_places;', X).
+get_cookies(X):- sqlite_query('cookies', 'SELECT * FROM moz_cookies;', X).
+
+cookie_base_domain(X, BaseDomain):- arg(2, X, BaseDomain).
+
+connect_db(Home):-
+	atom_concat(Home, 'storage.sqlite', Storage),
+	atom_concat(Home, 'places.sqlite', Places),
+	atom_concat(Home, 'cookies.sqlite', Cookies),
+	sqlite_connect(Storage, 'storage'),
+	sqlite_connect(Places, 'places'),
+	sqlite_connect(Cookies, 'cookies').
+
+main_intern:- read(Term), Term, main_intern.
+
+main:- current_prolog_flag(argv, [Argv|_]), connect_db(Argv), main_intern.
+main:- halt(1).
