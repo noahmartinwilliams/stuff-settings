@@ -100,3 +100,6 @@
 -S parallel
 -S xclip
 -S hub
+-S python-sympy
+-S erlang-unixodbc
+-S postgresql
