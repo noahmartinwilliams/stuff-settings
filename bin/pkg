@@ -17,6 +17,9 @@ update_file() {
 		if [ "$1" = "install" ];
 		then
 			echo "-S $2" >> $PACKAGES
+		elif [ "$1" = "remove" ] ;
+		then
+			echo "-R $2" >> $PACKAGES
 		fi
 	fi
 }
@@ -28,5 +31,9 @@ then
 	if [ "$1" = install ] ;
 	then
 		sudo pacman -S $2 && update_file $1 $2
+
+	elif [ "$1" = remove ] ;
+	then
+		sudo pacman -R $2 && update_file $1 $2
 	fi
 fi

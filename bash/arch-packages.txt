@@ -103,3 +103,4 @@
 -S python-sympy
 -S erlang-unixodbc
 -S postgresql
+-S cdrkit
