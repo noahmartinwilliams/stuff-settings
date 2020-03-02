@@ -9,9 +9,21 @@ get_moz_places(X):- sqlite_query('places', 'SELECT * FROM moz_places;', X).
 get_cookies(X):- sqlite_query('cookies', 'SELECT * FROM moz_cookies;', X).
 get_moz_historyvisits(X):- sqlite_query('places', 'SELECT * FROM moz_historyvisits;', X).
 
+places_id(X, ID):- arg(1, X, ID).
+places_title(X, Title):- arg(3, X, Title).
+
 historyvisit_id(X, Id):- arg(1, X, Id).
 historyvisit_from_visit(X, From):- arg(2, X, From).
 historyvisit_place_id(X, Id):- arg(3, X, Id).
+historyvisit_visit_time(X, Time):- arg(4, X, Time).
+historyvisit_get_prev(End, Start):- 
+	historyvisit_from_visit(End, StartID), 
+	get_moz_historyvisits(T), 
+	historyvisit_id(T, Start).
+
+time2date_and_time(X, Y):- var(Y), nonvar(X), format_time(atom(Y), '%D %H:%M:%S', X).
+time2date_and_time(X, Y):- nonvar(Y), var(X), parse_time(Y, X).
+
 cookie_base_domain(X, BaseDomain):- arg(2, X, BaseDomain).
 cookie_value(X, Text):- arg(5, X, Text).
 
@@ -19,11 +31,9 @@ connect_db(Home):-
 	atom_concat(Home, 'storage.sqlite', Storage),
 	atom_concat(Home, 'places.sqlite', Places),
 	atom_concat(Home, 'cookies.sqlite', Cookies),
-	atom_concat(Home, 'places.sqlite', Places),
 	sqlite_connect(Storage, 'storage'),
 	sqlite_connect(Places, 'places'),
-	sqlite_connect(Cookies, 'cookies'),
-	sqlite_connect(Places, 'places').
+	sqlite_connect(Cookies, 'cookies').
 
 main_intern:- read(Term), Term, main_intern.
 
