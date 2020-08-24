@@ -29,9 +29,12 @@ function catpath {
 }
 
 PRESERVE_TIMES=1
-while getopts ":ri:u:d:s:yc:e:C" COM_OPT;
+while getopts ":ri:u:d:s:yc:e:C:p" COM_OPT;
 do
 	case $COM_OPT in
+		p)
+			RSYNC_OPTS="$RSYNC_OPTS --progress"
+			;;
 		y)
 			YES=1
 			shift;
