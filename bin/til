@@ -1,0 +1,5 @@
+#! /bin/bash
+
+[ -d ~/Documents/til/ ] || mkdir -p ~/Documents/til
+
+echo "$(date -u '+%H:%M:%S:') $1" >> ~/Documents/til/$(date '+%Y-%m-%d')
