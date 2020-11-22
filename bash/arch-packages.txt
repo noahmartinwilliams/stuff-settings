@@ -16,7 +16,6 @@
 -S python-pyaudio
 -S python-pyqt5
 -S baobab
--S lynx
 -S avrdude
 -S vlc
 -S ruby-gtk2
@@ -59,7 +58,6 @@
 -S speedtest-cli
 -S go-bindata
 -S dep
--S links
 -S elinks
 -S rxvt-unicode
 -S whois
@@ -107,8 +105,6 @@
 -S gperftools
 -S figlet
 -S yaws
--S pdfpc
--R pdfpc
 -S pass
 -S expect
 -S tuxcards
@@ -116,7 +112,6 @@
 -S xsane
 -S android-udev
 -S fuse3
--S tensorflow
 -S qemu
 -S gnuplot
 -S qemu-arch-extra
@@ -129,3 +124,18 @@
 -S ttf-inconsolata
 -S vulkan-intel
 -S vokoscreen
+-S tty-solitaire
+-S openconnect
+-S rdesktop
+-S networkmanager-openconnect
+-S ghc-static
+-S htop
+-S github-cli
+-S pdfgrep
+-S pdfpc
+-S byobu
+-S atop
+-S nload
+-S jnettop
+-S bmon
+-S python-tensorflow-cuda

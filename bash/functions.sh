@@ -205,4 +205,10 @@ adjustDecimalPlaces()
 	fi
 }
 
+mkpdir()
+{
+	mkdir "$1"
+	echo -n "$1"
+}
+
 source ~/bash/local-functions.sh

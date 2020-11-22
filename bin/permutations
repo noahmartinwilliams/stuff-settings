@@ -1,0 +1,64 @@
+#! /usr/bin/swipl -q
+
+:- initialization(main).
+:- dynamic(a/1).
+
+a(0).
+
+grab([Head|Rest], 0, Head, Rest) :- !.
+grab([Head|List], N, Out, [Head|Rest]) :-
+	N2 is N - 1,
+	grab(List, N2, Out, Rest).
+	
+
+enumerate(N, Out) :- 
+	enumerate_intern(0, N, Out).
+
+enumerate_intern(X, N, N) :- N = X, !.
+enumerate_intern(X, _, X). 
+enumerate_intern(X, N, X2) :- X3 is X + 1, enumerate_intern(X3, N, X2).
+
+permutation(_, 0, []) :- !.
+permutation(List, N, [Head|Tail]) :-
+	enumerate(N, N2),
+	grab(List, N2, Head, Rest),
+	N3 is N - 1,
+	permutation(Rest, N3, Tail).
+
+get_lines(Stream, []) :- at_end_of_stream(Stream), !.
+get_lines(Stream, [Line|Lines]) :-
+	\+ at_end_of_stream(Stream),
+	read_line_to_string(Stream, Line),
+	get_lines(Stream, Lines).
+
+write_lines(_, []) :- !.
+write_lines(Stream, [Head | Tail]) :-
+	writeln(Stream, Head),
+	write_lines(Stream, Tail).
+
+on_backtrack(_).
+on_backtrack(G) :- G, !, fail.
+
+add_1:-
+	!, a(X),
+	!, X2 is X + 1,
+	!, asserta(a(X2)), !.
+
+b(X) :- !, a(X), !.
+
+main :- 
+	current_prolog_flag(argv, [R|_]),
+	atom_number(R, R2),
+	prompt1(''),
+	current_input(Stdin),
+	get_lines(Stdin, Lines),
+	permutation(Lines, R2, List),
+	on_backtrack(add_1),
+	b(N),
+	atom_number(Atom, N),
+	open(Atom, write, Stream),
+	on_backtrack(close(Stream)),
+	write_lines(Stream, List),
+	fail.
+main :- 
+	halt(0).
