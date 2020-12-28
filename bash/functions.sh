@@ -180,11 +180,6 @@ burnimage()
 	sudo bash -c "dd if=$IMG | pv -s $SIZE | dd of=$2"
 }
 
-man() 
-{  
-	$(which man) "$@" || help2man "$@" | $(which man) -l - ;
-}
-
 adjustDecimalPlaces()
 {
 	NUMBER=$1

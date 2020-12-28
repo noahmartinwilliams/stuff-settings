@@ -56,7 +56,7 @@ do
 				if [ "$PREV" != "$Y" ] ;
 				then
 					#echo "rm $Y ; ln $PREV $Y"
-					echo "$Y $PREV"
+					echo "$Y//$PREV"
 					rm "$Y" ; ln "$PREV" "$Y" ;
 				fi
 				
