@@ -185,3 +185,8 @@
 -S unzip
 -S traceroute
 -S xfce4-clipman-plugin
+-S at
+-S stack
+-S dos2unix
+-S kitty
+-S opendoas

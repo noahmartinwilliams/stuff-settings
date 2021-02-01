@@ -2,10 +2,8 @@
 
 YES=0
 REMOTE=0
-ON_DONE_COMMAND="exit 0"
-ON_ERROR_COMMAND="exit 1"
 EXCLUDE=""
-RSYNC_OPTS="-rluvH --no-inc-recursive --modify-window=1"
+RSYNC_OPTS="-arluvH --no-inc-recursive --modify-window=1"
 SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 SYNCLINKDEST='rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 function catpath {
@@ -29,7 +27,7 @@ function catpath {
 }
 
 PRESERVE_TIMES=1
-while getopts ":ri:u:d:s:yc:e:C:p" COM_OPT;
+while getopts "ri:u:d:s:y:e:cp" COM_OPT;
 do
 	case $COM_OPT in
 		p)
@@ -56,37 +54,14 @@ do
 		i)
 			IP=$OPTARG
 			;;
-		c)
-			COMMAND=$OPTARG
-			if [ ! -z "$COMMAND" ];
-			then	
-				COMMAND_COND=$(echo "$COMMAND" | cut -f 1 -d ';')
-				case $COMMAND_COND in
-					'done')
-						ON_DONE_COMMAND="$(echo \"$COMMAND\" | cut -f 2 -d ';'); exit 0"
-						;;
-					"error")
-						ON_ERROR_COMMAND="$(echo \"$COMMAND\" | cut -f 2 -d ';'); exit 1"
-						;;
-				esac
-			fi
-			;;
 		e)
 			EXCLUDE='EXCLUDE="--exclude-from='"$OPTARG\""' '
 			;;
-		C)
+		c)
 			RSYNC_OPTS="$RSYNC_OPTS -c"
-			;;
-		T)
-			PRESERVE_TIMES=0
 			;;
 	esac
 done
-
-if [ "$PRESERVE_TIMES" = 1 ];
-then
-	RSYNC_OPTS="$RSYNC_OPTS -t "
-fi
 
 if [ "$REMOTE" = 1 ];
 then
@@ -149,10 +124,9 @@ then
 	LATEST=$(catpath $DEST $(catpath $(catpath $(hostname) $SRC) $LATEST))
 	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
 	eval $EXCLUDE
-	eval $SYNCLINKDEST  || $ON_ERROR_COMMAND
+	eval $SYNCLINKDEST  
 else
 	mkdirdest $(catpath $(catpath $(hostname) $SRC) $TODAY)
 	eval $EXCLUDE
-	eval $SYNC  || $ON_ERROR_COMMAND
+	eval $SYNC  
 fi
-eval $ON_DONE_COMMAND
