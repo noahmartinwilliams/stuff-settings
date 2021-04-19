@@ -128,7 +128,6 @@
 -S openconnect
 -S rdesktop
 -S networkmanager-openconnect
--S ghc-static
 -S htop
 -S github-cli
 -S pdfgrep
@@ -190,3 +189,18 @@
 -S dos2unix
 -S kitty
 -S opendoas
+-S amfora
+-S minicom
+-S octave
+-S xfce4-screensaver
+-S xscreensaver
+-S slock
+-S pantheon-files
+-S python-tensorflow-cuda
+-S haskell-parallel
+-S neochat
+-S gcc-fortran
+-S ghc-static
+-S texlive-latexextra
+-S texlive-science
+-S blueman

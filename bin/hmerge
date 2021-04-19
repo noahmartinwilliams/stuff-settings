@@ -9,6 +9,18 @@ trap "rm -rf $SCRIPTDIR ; rm -rf $NUMDIR" EXIT
 FULLLIST=$(mktemp)
 trap "rm -rf $SCRIPTDIR ; rm -rf $NUMDIR ; rm $FULLLIST" EXIT
 
+get_num_cores() {
+	CORES=$(nproc --all)
+	if [ "$CORES" -gt 3 ] ;
+	then
+		echo "$(($CORES - 3))"
+	else
+		echo "$(($CORES))"
+	fi
+}
+
+NUMCORES=$(get_num_cores)
+
 PREVINODE=0
 filterDuplicates() {
 	PREVINODE=0
@@ -23,7 +35,7 @@ filterDuplicates() {
 		PREVINODE=$INODE
 	done
 }
-find $1 -type f | while read X ; do stat -c '%s %n' "$X" ; done | sort -n -k 1 -t' ' > $FULLLIST
+find $1 -type f | sort --parallel=$NUMCORES | while read X ; do stat -c '%s %n' "$X" ; done | sort -n -k 1 -t' ' > $FULLLIST
 PREVNUM=-1
 X=0
 
