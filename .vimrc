@@ -3,6 +3,7 @@ so ~/.vim/mod.vim
 map <F9> :mksession<space>
 map <F5> :wall<enter>
 map <F4> <esc> :sh <enter>
+map <C-q> <C-a> "	Guake on my config launches a new tab when I hit ctrl+a (this way guake acts more like screen, so I've got one less keyboard shortcut to memorize) 
 map W <c-w>w
 set encoding=utf-8
 set backupcopy=auto

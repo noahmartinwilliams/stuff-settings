@@ -203,4 +203,6 @@
 -S ghc-static
 -S texlive-latexextra
 -S texlive-science
--S blueman
+-S swi-prolog
+-S volumeicon
+-S clamav

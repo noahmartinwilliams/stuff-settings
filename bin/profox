@@ -16,10 +16,6 @@ historyvisit_id(X, Id):- arg(1, X, Id).
 historyvisit_from_visit(X, From):- arg(2, X, From).
 historyvisit_place_id(X, Id):- arg(3, X, Id).
 historyvisit_visit_time(X, Time):- arg(4, X, Time).
-historyvisit_get_prev(End, Start):- 
-	historyvisit_from_visit(End, StartID), 
-	get_moz_historyvisits(T), 
-	historyvisit_id(T, Start).
 
 time2date_and_time(X, Y):- var(Y), nonvar(X), format_time(atom(Y), '%D %H:%M:%S', X).
 time2date_and_time(X, Y):- nonvar(Y), var(X), parse_time(Y, X).
