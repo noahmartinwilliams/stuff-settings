@@ -170,6 +170,9 @@ update()
 	elif [ -f /etc/arch-release ] ;
 	then
 		sudo pacman -Syu
+	elif [ -f /etc/manjaro-release ] ;
+	then
+		sudo pacman -Syu
 	fi
 }
 
