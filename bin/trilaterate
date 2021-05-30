@@ -1,0 +1,156 @@
+#! /usr/bin/octave -q
+
+arg_list = argv() ; 
+
+p1 = [] ;
+p2 = [] ;
+p3 = [] ;
+p4 = [] ;
+for i = 1 : nargin
+	if ( strcmp( arg_list{ i } , "-r1" ) )
+		r1 = strread( arg_list{ i + 1 } , "%f" ) ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-r2" ) )
+		r2 = strread( arg_list{ i + 1 } , "%f" ) ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-r3" ) )
+		r3 = strread( arg_list{ i + 1 } , "%f" ) ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-r4" ) )
+		r4 = strread( arg_list{ i + 1 }, "%f" ) ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-p1" ) )
+		[px, py, pz] = strread ( arg_list{ i + 1 } , "%f,%f,%f" ) ;
+		p1 = [ px ; py ; pz ; 1 ] ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-p2" ) )
+		[px, py, pz] = strread ( arg_list{ i + 1 } , "%f,%f,%f" ) ;
+		p2 = [ px ; py ; pz ; 1 ] ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-p3" ) )
+		[px, py, pz] = strread ( arg_list{ i + 1 } , "%f,%f,%f" ) ;
+		p3 = [ px ; py ; pz ; 1 ] ;
+	endif
+
+	if ( strcmp( arg_list{ i } , "-p4" ) )
+		[px, py, pz] = strread ( arg_list{ i + 1 } , "%f,%f,%f" ) ;
+		p4 = [ px ; py ; pz ; 1 ] ;
+	endif
+end
+
+p1v = [ -p1(1) ; -p1(2) ; -p1(3) ; 1 ] ; 
+p1TransToOrigMat = [ [ 1 0 0 ; 0 1 0 ; 0 0 1 ; 0 0 0 ] p1v ] ; 
+
+p1 = p1TransToOrigMat * p1 ;
+p2 = p1TransToOrigMat * p2 ;
+p3 = p1TransToOrigMat * p3 ;
+p4 = p1TransToOrigMat * p4 ;
+
+transfMat = p1TransToOrigMat ; 
+
+p2ZAngle = atan2(p2(2), p2(1)) ;
+p2RotZMat1 = [cos(-p2ZAngle), (-sin(-p2ZAngle)), 0, 0 ; sin(-p2ZAngle), cos(-p2ZAngle), 0, 0 ; 0 0 1 0 ; 0 0 0 1] ;
+
+p1 = p2RotZMat1 * p1 ;
+p2 = p2RotZMat1 * p2 ;
+p3 = p2RotZMat1 * p3 ;
+p4 = p2RotZMat1 * p4 ;
+
+p2YAngle = atan2(p2(3), p2(1)) ;
+p2RotZMat2 = [cos(p2YAngle), 0, sin(p2YAngle), 0 ; 0, 1, 0, 0 ; (-sin(p2YAngle)), 0, cos(p2YAngle), 0 ; 0, 0, 0, 1] ;
+
+p1 = p2RotZMat2 * p1 ;
+p2 = p2RotZMat2 * p2 ;
+p3 = p2RotZMat2 * p3 ;
+p4 = p2RotZMat2 * p4 ;
+
+transfMat = p2RotZMat2 * p2RotZMat1 * transfMat ;
+
+p2v = [ p2(1) ; p2(2) ; p2(3) ] ;
+p2Mag = sqrt( sum( p2v .* p2v ) ) ;
+angleTargetHas = acos( ( r1 * r1 + p2Mag * p2Mag - r2 * r2 ) / ( 2 * r1 * p2Mag ) ) ;
+
+targetHypLoc1 = [ ( r1 * cos ( angleTargetHas ) ) ; ( r1 * sin ( angleTargetHas ) ) ; 0 ] ;
+targetHypLoc2 = [ ( r1 * cos ( angleTargetHas ) ) ; 0 ; (r1 * sin(angleTargetHas)) ] ; 
+targetHypLoc3 = [ ( r1 * cos ( angleTargetHas ) ) ; - ( r1 * sin ( angleTargetHas ) ) ; 0 ] ;
+
+circleCenter = ( targetHypLoc1 + targetHypLoc3 ) / 2 ;
+circleRadius = sqrt( sum( ( circleCenter - targetHypLoc1 ) .* ( circleCenter - targetHypLoc1 ) ) ) ;
+
+translCircToOrigMat = [ [ [ 1 , 0 , 0 ; 0 , 1 , 0 ; 0 , 0 , 1 ] ( - circleCenter ) ] ; [ 0 , 0 , 0 , 1 ] ] ;
+
+transfMat = translCircToOrigMat * transfMat ;
+
+p1 = translCircToOrigMat * p1 ;
+p2 = translCircToOrigMat * p2 ;
+p3 = translCircToOrigMat * p3 ;
+p4 = translCircToOrigMat * p4 ;
+
+targetHypLoc1 = translCircToOrigMat * [ targetHypLoc1 ; 1 ] ;
+targetHypLoc2 = translCircToOrigMat * [ targetHypLoc2 ; 1 ] ;
+targetHypLoc3 = translCircToOrigMat * [ targetHypLoc3 ; 1 ] ;
+
+thl2ZAngle = atan2( targetHypLoc2(2) , targetHypLoc2(1) ) ;
+thl2XAlignRotMat1 = [ cos( - thl2ZAngle ) , -sin( - thl2ZAngle ), 0, 0 ; sin( - thl2ZAngle ) , cos( - thl2ZAngle ) , 0 , 0 ; 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 1 ] ;
+
+targetHypLoc1 = thl2XAlignRotMat1 * targetHypLoc1 ;
+targetHypLoc2 = thl2XAlignRotMat1 * targetHypLoc2 ;
+targetHypLoc3 = thl2XAlignRotMat1 * targetHypLoc3 ;
+
+thl2YAngle = atan2( targetHypLoc2(3) , targetHypLoc2(1) ) ;
+thl2XAlignRotMat2 = [ cos( thl2YAngle ) , 0 , sin( thl2YAngle ) , 0 ; 0 , 1 , 0 , 0 ; ( - sin( thl2YAngle ) ) , 0 , cos( thl2YAngle ) , 0 ; 0 , 0 , 0 , 1 ] ;
+
+targetHypLoc1 = thl2XAlignRotMat2 * targetHypLoc1 ;
+targetHypLoc2 = thl2XAlignRotMat2 * targetHypLoc2 ;
+targetHypLoc3 = thl2XAlignRotMat2 * targetHypLoc3 ;
+
+p1 = thl2XAlignRotMat2 * thl2XAlignRotMat1 * p1 ;
+p2 = thl2XAlignRotMat2 * thl2XAlignRotMat1 * p2 ;
+p3 = thl2XAlignRotMat2 * thl2XAlignRotMat1 * p3 ;
+p4 = thl2XAlignRotMat2 * thl2XAlignRotMat1 * p4 ;
+
+transfMat = thl2XAlignRotMat2 * thl2XAlignRotMat1 * transfMat ;
+
+r3 = sqrt( r3 * r3 - p3(3) * p3(3) ) ;
+p3 = [ p3(1) ; p3(2) ; 0 ; 1 ] ; 
+
+p3ZAngle = -atan2( p3(2) , p3(1) ) ;
+p3AlignXRotMat = [ cos( p3ZAngle ) , ( - sin( p3ZAngle ) ) , 0 , 0 ; sin( p3ZAngle ) , cos( p3ZAngle ) , 0 , 0 ; 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 1 ] ;
+
+p1 = p3AlignXRotMat * p1 ;
+p2 = p3AlignXRotMat * p2 ;
+p3 = p3AlignXRotMat * p3 ;
+p4 = p3AlignXRotMat * p4 ;
+
+transfMat = p3AlignXRotMat * transfMat ;
+
+p3v = [p3(1) , p3(2) , 0] ;
+p3Mag = sqrt( sum( p3v .* p3v ) ) ;
+targetAngle = acos( ( circleRadius * circleRadius + p3Mag * p3Mag - r3 * r3 ) / ( 2 * p3Mag * circleRadius ) ) ;
+
+targetHypLoc1 = [ ( circleRadius * cos( targetAngle ) ); ( circleRadius * sin( targetAngle ) ) ; 0 ] ;
+targetHypLoc2 = [ ( circleRadius * cos( - targetAngle ) ) ; ( circleRadius * sin( - targetAngle ) ) ; 0 ] ;
+
+p4v = [ p4(1) ; p4(2) ; p4(3) ] ;
+d1 = p4v - targetHypLoc1 ;
+d2 = p4v - targetHypLoc2 ; 
+dist1 = sqrt( sum( d1 .* d1 ) ) ;
+dist2 = sqrt( sum( d2 .* d2 ) ) ;
+
+if ( abs( dist1 - r4 ) <= 0.001 )
+	target = inv(transfMat) * [ targetHypLoc1 ; 1 ] ;
+	printf( "%f,%f,%f\n" , target( 1 ) , target( 2 ) , target( 3 ) ) ;
+else
+	if ( abs( dist2 - r4 ) <= 0.001 )
+		target = inv(transfMat) * [ targetHypLoc2 ; 1 ] ;
+		printf( "%f,%f,%f\n" , target( 1 ) , target( 2 ) , target( 3 ) ) ;
+	else
+		disp("Error")
+	endif
+endif
