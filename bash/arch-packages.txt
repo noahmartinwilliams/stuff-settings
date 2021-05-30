@@ -207,3 +207,5 @@
 -S volumeicon
 -S clamav
 -S nvidia
+-S webp-pixbuf-loader
+-R rebar

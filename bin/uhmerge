@@ -1,0 +1,84 @@
+#! /bin/bash
+
+NUMDIR=$(mktemp -d)
+trap "rm -rf $NUMDIR" EXIT
+
+SCRIPTDIR=$(mktemp -d)
+trap "rm -rf $SCRIPTDIR ; rm -rf $NUMDIR" EXIT
+
+FULLLIST=$(mktemp)
+trap "rm -rf $SCRIPTDIR ; rm -rf $NUMDIR ; rm $FULLLIST" EXIT
+
+get_num_cores() {
+	CORES=$(nproc --all)
+	if [ "$CORES" -gt 3 ] ;
+	then
+		echo "$(($CORES - 3))"
+	else
+		echo "$(($CORES))"
+	fi
+}
+
+NUMCORES=$(get_num_cores)
+
+PREVINODE=0
+filterDuplicates() {
+	PREVINODE=0
+	while read W ;
+	do 
+		INODE=$(echo "$W" | sed 's/^\([0-9]\+\):.*$/\1/g')
+		NAME=$(echo "$W" | sed 's/^[0-9]\+:\(.*\)$/\1/g')
+		if [ "$INODE" != "$PREVINODE" ] ;
+		then
+			echo "$NAME"
+		fi
+		PREVINODE=$INODE
+	done
+}
+find $1 -type f | sort --parallel=$NUMCORES | while read X ; do stat -c '%s %n' "$X" ; done | sort -n -k 1 -t' ' > $FULLLIST
+PREVNUM=-1
+X=0
+
+cat $FULLLIST | while read Y ; 
+do 
+	NUM=$(echo "$Y" | cut -f 1 -d ' ') ; 
+	if [ "$PREVNUM" -ne "$NUM" ] ; 
+	then 
+		X=$(($X + 1)) ;
+	fi
+	echo "$Y" | sed 's/^[0-9]\+[[:space:]]\+\(.*\)$/\1/g' >> $NUMDIR/$X ;
+	PREVNUM=$NUM ;
+done
+
+rm $FULLLIST
+trap "rm -rf $SCRIPTDIR ; rm -rf $NUMDIR" EXIT
+
+Z=0
+ls $NUMDIR | while read X ;
+do
+	PREV=""
+	cat $NUMDIR/$X | while read Y ;
+	do
+		if [ -z "$PREV" ] ;
+		then
+			PREV=$Y ;
+		else
+			if cmp "$PREV" "$Y" > /dev/null ;
+			then
+				if [ "$PREV" != "$Y" ] ;
+				then
+					#echo "rm $Y ; ln $PREV $Y"
+					echo "$Y//$PREV"
+					rm "$Y" ; cp -a "$PREV" "$Y" ;
+				fi
+				
+			fi
+			PREV=$Y
+		fi
+
+	done
+	Z=$(($Z + 1));
+done
+
+rm -rf $NUMDIR ;
+trap "rm -rf $SCRIPTDIR" EXIT
