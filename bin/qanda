@@ -1,0 +1,21 @@
+#! /usr/bin/python
+
+from transformers import pipeline
+import argparse
+import sys
+parser = argparse.ArgumentParser(description='Read text from a file and answer questions about it.')
+parser.add_argument("--file", default="question.txt", type=str, help='the file to read the question from.')
+args = parser.parse_args()
+
+question_answerer = pipeline("question-answering")
+
+with open(args.file, "r") as f:
+	string = ""
+	for line in f:
+		string = string + line
+
+	for line in sys.stdin:
+		result = question_answerer(question=line, context=string)
+		print(result['answer'])
+
+pass
