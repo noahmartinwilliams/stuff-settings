@@ -209,4 +209,9 @@ mkpdir()
 	echo -n "$1"
 }
 
+countFiles() 
+{
+	find "$1" -type f | wc -l
+}
+
 source ~/bash/local-functions.sh
