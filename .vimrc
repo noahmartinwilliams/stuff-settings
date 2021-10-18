@@ -16,6 +16,7 @@ set shiftwidth=8
 "set errorbells
 set splitright
 set autoindent
+set smarttab
 
 autocmd BufNewFile,BufRead *.h so ~/.vim/header.vim
 autocmd BufRead,BufNewFile *.clj set filetype=clojure
