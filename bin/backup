@@ -116,7 +116,7 @@ then
 	mkdirdest $(hostname)
 fi
 
-LATEST=$(lsdest $(catpath $(hostname) $SRC) | egrep 'UTC[0-9]{4},[0-9]{2},[0-9]{2},[0-9]{4}' | sort -nr |  head -n 1 )
+LATEST=$(lsdest $(catpath $(hostname) $SRC) | grep -E 'UTC[0-9]{4},[0-9]{2},[0-9]{2},[0-9]{4}' | sort -nr |  head -n 1 )
 if [ ! -z "$LATEST" ];
 then
 	#LATEST="$(catpath $(catpath $DEST $(hostname)) $LATEST)"
