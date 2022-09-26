@@ -1,4 +1,4 @@
-#! /usr/bin/python2.7
+#! /usr/bin/python
 
 import json
 import sys
@@ -19,6 +19,6 @@ def get_image(text):
 
 js=get_json(int(sys.argv[1]))
 get_image(js)
-f=open('/home/noah/Pictures/comics/xkcd/'+str( string.replace(check_output( ['basename', js['img']]), "\n", ".txt")  ), "w")
+f=open('/home/noah/Pictures/comics/xkcd/'+str( check_output( ['basename', js['img']], encoding='UTF-8').replace("\n", ".txt")  ), "w")
 f.write(get_text(js))
 f.close()
