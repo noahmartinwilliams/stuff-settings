@@ -22,6 +22,7 @@ syn keyword OctBuiltInPlotFunc ylabel
 syn keyword OctBuiltInPlotFunc title
 syn keyword OctBuiltInPlotFunc legend
 syn keyword OctBuiltInPlotFunc plot
+syn keyword OctBuiltInPlotFunc waitfor
 
 syn keyword OctBuiltInProbFunc error
 syn keyword OctBuiltInProbFunc warning

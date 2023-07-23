@@ -214,4 +214,9 @@ countFiles()
 	find "$1" -type f | wc -l
 }
 
+searchDir()
+{
+	find "$1" -type f -exec grep -H "$2" {} \;
+}
+
 source ~/bash/local-functions.sh
