@@ -23,6 +23,7 @@ syn keyword OctBuiltInPlotFunc title
 syn keyword OctBuiltInPlotFunc legend
 syn keyword OctBuiltInPlotFunc plot
 syn keyword OctBuiltInPlotFunc waitfor
+syn keyword OctBuiltInPlotFunc figure
 
 syn keyword OctBuiltInProbFunc error
 syn keyword OctBuiltInProbFunc warning
@@ -52,6 +53,7 @@ syn match OctColon /:/
 syn region OctShebang start="#!" end="\n"
 syn region OctComment start="%" end="\n" contains=octTodo
 syn region OctString start="'" end="'" skip="\\'" contains=OctEscapes contained
+syn region OctString start="\"" end="\"" skip="\\\"" contains=OctEscapes contained
 syn cluster OctExpression contains=OctCondOp,OctAnonVar,OctVariable,OctNumber,OctString,OctBuiltInFunc,@OctInParan
 syn region OctMatrix start="\[" end="\]" contains=@OctExpression,OctComma,OctSemiColon,OctSet,OctInParan,OctEq,OctAt,OctCondOp
 syn region OctSet start="{" end="}" contains=@OctExpression,OctComma,OctSemiColon,OctInParan,OctEq,OctAt,OctCondOp,OctColon
