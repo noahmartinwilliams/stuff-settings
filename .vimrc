@@ -11,10 +11,9 @@ syntax on
 set wildmode=longest
 set wildmenu
 
-set softtabstop=8
-set shiftwidth=8
-"set errorbells
-set splitright
+autocmd BufNewFile set softtabstop=8
+autocmd BufNewFile set shiftwidth=8
+autocmd BufNewFile set splitright
 set autoindent
 set smarttab
 
