@@ -3,7 +3,7 @@
 YES=0
 REMOTE=0
 EXCLUDE=""
-RSYNC_OPTS="-arluvH --no-inc-recursive --modify-window=1"
+RSYNC_OPTS="-arluvH --no-inc-recursive"
 SYNC='rsync $RSYNC_OPTS $EXCLUDE $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 SYNCLINKDEST='rsync $RSYNC_OPTS $EXCLUDE --link-dest=$LATEST $SRC/ $(catpath $(catpath $(catpath $DEST $(hostname)) $SRC) $TODAY)/'
 function catpath {
@@ -27,7 +27,7 @@ function catpath {
 }
 
 PRESERVE_TIMES=1
-while getopts "ri:u:d:s:y:e:cp" COM_OPT;
+while getopts "m:ri:u:d:s:y:e:cp" COM_OPT;
 do
 	case $COM_OPT in
 		p)
@@ -59,6 +59,9 @@ do
 			;;
 		c)
 			RSYNC_OPTS="$RSYNC_OPTS -c"
+			;;
+		m)
+			RSYNC_OPTS="$RSYNC_OPTS --modify-window=$OPTARG"
 			;;
 	esac
 done
