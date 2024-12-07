@@ -17,6 +17,7 @@ autocmd BufNewFile set splitright
 set autoindent
 set smarttab
 
+autocmd BufNewFile,BufRead *.x so ~/.vim/alex.vim
 autocmd BufNewFile,BufRead *.h so ~/.vim/header.vim
 autocmd BufRead,BufNewFile *.clj set filetype=clojure
 autocmd BufRead,BufNewFile *.m set filetype=octave
@@ -30,6 +31,7 @@ autocmd filetype assembly so ~/.vim/assembly.vim
 autocmd filetype LaTeX so ~/.vim/latex.vim
 autocmd filetype clojure so ~/.vim/clojure.vim
 autocmd filetype haskell execute "setlocal expandtab shiftwidth=4 softtabstop=0 tabstop=4"
+autocmd filetype rust so ~/.vim/rust.vim
 
 autocmd BufNewFile * let fname=expand("%:p")
 autocmd BufNewFile *.m execute "autocmd BufWritePost ".fname." call SetExecutableBit()"
@@ -45,7 +47,6 @@ autocmd BufNewFile *.py 0put = '#! /usr/bin/python'
 autocmd BufNewFile *.sh 0put = '#! /bin/bash'
 autocmd BufNewFile *.pl 0put = '#! /usr/bin/swipl -q'
 autocmd BufNewFile *.sh set autoindent
-autocmd BufNewFile *.rb 0put = '#! /usr/bin/ruby'
 autocmd BufNewFile,BufRead *.scala so ~/.vim/scala.vim
 
 

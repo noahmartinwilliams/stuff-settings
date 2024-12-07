@@ -24,9 +24,7 @@
 -S perl-switch
 -S ccache
 -S lzop
--S portmidi
 -S torsocks
--S slop
 -S recordmydesktop
 -S jad
 -S distorm
@@ -43,7 +41,6 @@
 -S elinks
 -S rxvt-unicode
 -S whois
--S xdotool
 -S shiboken2
 -S help2man
 -S python-future
@@ -70,7 +67,6 @@
 -S hub
 -S python-sympy
 -S erlang-unixodbc
--S postgresql
 -S cdrkit
 -S gperftools
 -S figlet
@@ -212,7 +208,6 @@
 -S yt-dlp
 -S kicad
 -S kicad-library
--S tensorflow-cuda
 -S nvidia-settings
 -S glances
 -S llvm
@@ -222,7 +217,6 @@
 -S xorg-xmag
 -S translate-shell
 -S ttf-sazanami
--S git-lfs
 -S python-torchvision-cuda
 -S foomatic-db
 -S gutenprint
@@ -259,7 +253,6 @@
 -S superslicer
 -S chromium
 -S ntp
--S godot
 -S ceres-solver
 -S coin-or-coinutils
 -S flann
@@ -270,3 +263,11 @@
 -S lazygit
 -S xdot
 -S python-qtpy
+-S lshw
+-S intel-oneapi-dpcpp-cpp
+-S level-zero-headers
+-S intel-oneapi-mkl-sycl
+-S intel-oneapi-basekit
+-S sbcl
+-S rustup
+-S webkitgtk-6.0
