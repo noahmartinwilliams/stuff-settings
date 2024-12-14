@@ -35,7 +35,12 @@ update_file() {
 }
 if [ -f /etc/debian_version ] ;
 then
-	doas apt-get $1 $2 && update_file $1 $2
+	if [ "$1" = update ] ;
+	then
+		doas aptitude update 
+	else
+		doas apt-get $1 $2 && update_file $1 $2
+	fi
 elif [ -f /etc/arch-release ] ;
 then
 	if [ "$1" = install ] ;
@@ -45,6 +50,9 @@ then
 	elif [ "$1" = remove ] ;
 	then
 		doas pacman -R $2 && update_file $1 $2
+	elif [ "$1" = update ] ;
+	then
+		doas pacman -Syu
 	fi
 elif [ -f /etc/manjaro-release ] ;
 then
@@ -54,5 +62,8 @@ then
 	elif [ "$1" = remove ] ;
 	then
 		doas pacman -R $2 && update_file $1 $2
+	elif [ "$1" = update ] ;
+	then
+		doaspacman -Syu 
 	fi
 fi
