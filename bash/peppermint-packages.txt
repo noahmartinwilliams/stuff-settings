@@ -1,3 +1,8 @@
-freecad
-fortune
-cowsay
+install freecad
+install fortune
+install cowsay
+install blender
+install freecad
+install vim
+install vim-runtime
+install cura

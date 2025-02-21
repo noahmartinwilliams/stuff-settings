@@ -1,7 +1,17 @@
 #! /bin/bash
 
 update_file() {
-	if [ -f /etc/debian_version ] ;
+	if [ -s /etc/os-release -o -f /etc/os-release ] ;
+	then
+		if [ "$(cat /etc/os-release | head -n 1)" = 'PRETTY_NAME="PeppermintOS"' ];
+		then
+			PACKAGES=~/bash/peppermint-packages.txt
+			if [ "$1" = "install" ] ;
+			then
+				echo "install $2" >> $PACKAGES
+			fi
+		fi
+	elif [ -f /etc/debian_version ] ;
 	then
 		PACKAGES=~/bash/debian-packages.txt
 
@@ -30,16 +40,6 @@ update_file() {
 		elif [ "$1" = "remove" ];
 		then
 			echo "-R $2" >> $PACKAGES
-		fi
-	elif [ -s /etc/os-release -o -f /etc/os-release ] ;
-	then
-		PACKAGES=~/bash/peppermint-packages.txt
-		if [ "$(cat /etc/os-release | head -n 1)" = "PRETTY_NAME=\"PeppermintOS\"" ];
-		then
-			if [ "$1" = "install" ] ;
-			then
-				echo "install $2" >> $PACKAGES
-			fi
 		fi
 	fi
 }
