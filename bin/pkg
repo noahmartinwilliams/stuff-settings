@@ -31,8 +31,19 @@ update_file() {
 		then
 			echo "-R $2" >> $PACKAGES
 		fi
+	elif [ -s /etc/os-release -o -f /etc/os-release ] ;
+	then
+		PACKAGES=~/bash/peppermint-packages.txt
+		if [ "$(cat /etc/os-release | head -n 1)" = "PRETTY_NAME=\"PeppermintOS\"" ];
+		then
+			if [ "$1" = "install" ] ;
+			then
+				echo "install $2" >> $PACKAGES
+			fi
+		fi
 	fi
 }
+
 if [ -f /etc/debian_version ] ;
 then
 	if [ "$1" = update ] ;
@@ -65,5 +76,11 @@ then
 	elif [ "$1" = update ] ;
 	then
 		doaspacman -Syu 
+	fi
+elif [ $(cat /etc/os-release | head -n 1 | cut -f 2 -d '=' ) = '"PeppermintOS"' ] ;
+then
+	if [ $1 = install ] ;
+	then
+		doas apt install $2 && update_file $1 $2 
 	fi
 fi
